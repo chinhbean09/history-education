@@ -1,5 +1,4 @@
-
-History-Edu
+#history-edu
 History-Edu is an educational platform designed for users to purchase learning packages, watch educational videos, and take interactive quizzes. The platform allows video uploads, user interactions, and progress tracking to enhance the learning experience.
 
 Key Features
