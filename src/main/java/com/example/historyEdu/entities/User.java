@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -76,4 +77,15 @@ public class User {
 
     @Column(name = "avatar")
     private String avatar;
+
+//    @OneToMany(mappedBy = "user")
+//    private List<VideoProgress> videoProgressList;
+//
+    @OneToMany(mappedBy = "user")
+    private List<UserProgress> userProgressList;
+
+    @ManyToOne
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
+
 }
