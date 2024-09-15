@@ -44,8 +44,8 @@ public class Course {
     @Column(name = "rating", nullable = false)
     private Long rating;
 
-//    @OneToMany(mappedBy = "course")
-//    private List<UserProgress> userProgressList;
+    @OneToMany(mappedBy = "course")
+    private List<UserProgress> userProgressList;
 
     @OneToMany(mappedBy = "course")
     private List<User> users;

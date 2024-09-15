@@ -22,6 +22,5 @@ public class Role {
     private String roleName;
 
     public static String ADMIN = "ADMIN";
-    public static String PARTNER = "PARTNER";
     public static String CUSTOMER = "CUSTOMER";
 }
