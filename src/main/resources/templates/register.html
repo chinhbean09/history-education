@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'/>
+    <title>Welcome to BluE</title>
+    <style type="text/css">
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Welcome to BluE, <span th:text="${fullName}"></span>!</h2>
+    <p>We're excited to have you as a member of BluE, where you can dive deep into the wonders of history.</p>
+    <p>Feel free to explore our platform and start learning today!</p>
+    <p class="footer">This is an automated email, please do not reply.</p>
+</div>
+</body>
+</html>
