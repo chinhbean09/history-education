@@ -163,10 +163,10 @@ public class UserController {
 
     @PutMapping("/update-password/{userId}")
     public ResponseEntity<ResponseObject> changePassword(
-            @PathVariable long id,
+            @PathVariable long userId,
             @Valid @RequestBody ChangePasswordDTO changePasswordDTO) {
         try {
-            userService.changePassword(id, changePasswordDTO);
+            userService.changePassword(userId, changePasswordDTO);
             return ResponseEntity.ok(ResponseObject.builder()
                     .status(HttpStatus.OK)
                     .message(MessageKeys.CHANGE_PASSWORD_SUCCESSFULLY)
