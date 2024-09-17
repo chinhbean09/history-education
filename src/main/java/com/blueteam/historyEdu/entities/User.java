@@ -87,7 +87,7 @@ public class User extends BaseEntity implements UserDetails, OAuth2User{
     private List<UserProgress> userProgressList;
 
     @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false)
+    @JoinColumn(name = "course_id")
     private Course course;
 
     @Override
