@@ -86,23 +86,23 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                             objectMapper.writeValue(response.getWriter(), errorResponse);
                         })
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService))
-                        .successHandler((request, response, authentication) -> {
-                            User user = (User) authentication.getPrincipal();
-                            String token = jwtTokenUtils.generateToken(user);
-                            response.setContentType("application/json");
-                            response.setStatus(HttpServletResponse.SC_OK);
-                            response.getWriter().write("{\"token\":\"" + token + "\"}");
-                        })
-                        .failureHandler((request, response, exception) -> {
-                            response.setContentType("application/json");
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.getWriter().write("{\"error\":\"" + exception.getMessage() + "\"}");
-                        })
                 );
+//                .oauth2Login(oauth2 -> oauth2
+//                        .userInfoEndpoint(userInfo -> userInfo
+//                                .userService(customOAuth2UserService))
+//                        .successHandler((request, response, authentication) -> {
+//                            User user = (User) authentication.getPrincipal();
+//                            String token = jwtTokenUtils.generateToken(user);
+//                            response.setContentType("application/json");
+//                            response.setStatus(HttpServletResponse.SC_OK);
+//                            response.getWriter().write("{\"token\":\"" + token + "\"}");
+//                        })
+//                        .failureHandler((request, response, exception) -> {
+//                            response.setContentType("application/json");
+//                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                            response.getWriter().write("{\"error\":\"" + exception.getMessage() + "\"}");
+//                        })
+//                );
         return http.build();
     }
 

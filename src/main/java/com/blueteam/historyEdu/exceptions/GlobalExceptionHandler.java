@@ -1,6 +1,6 @@
 package com.blueteam.historyEdu.exceptions;
 
-import com.chinhbean.bookinghotel.responses.ErrorResponse;
+import com.blueteam.historyEdu.responses.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
