@@ -55,19 +55,9 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                                 String.format("%s/users/login", apiPrefix),
                                 String.format("%s/users/generate-secret-key", apiPrefix),
                                 String.format("%s/users/block-or-enable/**", apiPrefix),
-                                String.format("%s/hotels/get-hotels", apiPrefix),
-                                String.format("%s/hotels/detail/**", apiPrefix),
-                                String.format("%s/hotels/filter", apiPrefix),
-                                String.format("%s/hotels/search", apiPrefix),
-                                String.format("%s/room-types/filter/**", apiPrefix),
-                                String.format("%s/room-types/get-room/**", apiPrefix),
-                                String.format("%s/room-types/get-all-room-status/**", apiPrefix),
-                                String.format("%s/bookings/create-booking", apiPrefix),
                                 String.format("%s/payment/**", apiPrefix),
                                 String.format("%s/users/oauth2/facebook", apiPrefix),
                                 String.format("%s/users/oauth2/google", apiPrefix),
-                                String.format("%s/feedbacks/get-all-feedback/**", apiPrefix),
-                                String.format("%s/feedbacks/get-feedback/**", apiPrefix),
                                 String.format("%s/forgot-password/**", apiPrefix)
                         )
                         .permitAll()
