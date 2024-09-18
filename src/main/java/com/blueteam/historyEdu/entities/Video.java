@@ -30,9 +30,13 @@ public class Video {
     @Column(name = "create_at")
     private LocalDateTime createAt;
 
+    @Column(name="more-infomation")
+    private String moreInformation;
+
     @ManyToOne
     @JoinColumn(name = "chapter_id", nullable = false)
     private Chapter chapter;
+
 
 //    @OneToMany(mappedBy = "video")
 //    private List<Material> materials;
