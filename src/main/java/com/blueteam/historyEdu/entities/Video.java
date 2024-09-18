@@ -30,7 +30,7 @@ public class Video {
     @Column(name = "create_at")
     private LocalDateTime createAt;
 
-    @Column(name="more-infomation")
+    @Column(name="more_infomation")
     private String moreInformation;
 
     @ManyToOne
