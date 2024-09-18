@@ -2,6 +2,8 @@ package com.blueteam.historyEdu.services.user;
 
 import com.blueteam.historyEdu.components.JwtTokenUtils;
 import com.blueteam.historyEdu.components.LocalizationUtils;
+import com.blueteam.historyEdu.dtos.ChangePasswordDTO;
+import com.blueteam.historyEdu.dtos.DataMailDTO;
 import com.blueteam.historyEdu.dtos.User.UserDTO;
 import com.blueteam.historyEdu.dtos.User.UserLoginDTO;
 import com.blueteam.historyEdu.entities.Role;
@@ -10,7 +12,10 @@ import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
 import com.blueteam.historyEdu.repositories.IRoleRepository;
 import com.blueteam.historyEdu.repositories.IUserRepository;
+import com.blueteam.historyEdu.services.sendmails.MailService;
+import com.blueteam.historyEdu.utils.MailTemplate;
 import com.blueteam.historyEdu.utils.MessageKeys;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -26,6 +31,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,6 +45,7 @@ public class UserService implements IUserService {
     private final JwtTokenUtils jwtTokenUtils;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final AuthenticationManager authenticationManager;
+    private final MailService mailService;
 
     @Override
     @Transactional
@@ -82,7 +89,8 @@ public class UserService implements IUserService {
             newUser.setPassword(encodedPassword);
         }
         User user = UserRepository.save(newUser);
-
+        // send mail
+        sendMailForRegisterSuccess(userDTO.getFullName(), userDTO.getEmail(), userDTO.getPassword());
         return user;
     }
     @Override
@@ -105,6 +113,49 @@ public class UserService implements IUserService {
             return new DataNotFoundException("User not found");
         });
     }
+
+    @Override
+    public void sendMailForRegisterSuccess(String fullName, String email, String password) {
+        try {
+            DataMailDTO dataMail = new DataMailDTO();
+            dataMail.setTo(email);
+            dataMail.setSubject(MailTemplate.SEND_MAIL_SUBJECT.USER_REGISTER);
+
+            Map<String, Object> props = new HashMap<>();
+            props.put("fulName", fullName);
+            props.put("email", email);
+            props.put("password", password);
+
+            dataMail.setProps(props);
+
+            mailService.sendHtmlMail(dataMail, MailTemplate.SEND_MAIL_TEMPLATE.USER_REGISTER);
+        } catch (MessagingException exp) {
+            logger.error("Failed to send registration success email", exp);
+        }
+    }
+
+    @Override
+    public void changePassword(Long id, ChangePasswordDTO changePasswordDTO) throws DataNotFoundException {
+        User exsistingUser = UserRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException(MessageKeys.USER_NOT_FOUND));
+        if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), exsistingUser.getPassword())) {
+            throw new DataNotFoundException(MessageKeys.OLD_PASSWORD_WRONG);
+        }
+        if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getConfirmPassword())) {
+            throw new DataNotFoundException(MessageKeys.CONFIRM_PASSWORD_NOT_MATCH);
+        }
+        exsistingUser.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+        UserRepository.save(exsistingUser);
+    }
+
+    @Override
+    public void updatePassword(String email, String password) throws DataNotFoundException {
+        User user = UserRepository.findByEmail(email)
+                .orElseThrow(() -> new DataNotFoundException(MessageKeys.USER_NOT_FOUND));
+        user.setPassword(passwordEncoder.encode(password));
+        UserRepository.save(user);
+    }
+
     @Override
     public String login(UserLoginDTO userLoginDTO) throws Exception {
         String loginIdentifier = userLoginDTO.getLoginIdentifier();

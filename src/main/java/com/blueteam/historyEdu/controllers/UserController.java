@@ -2,6 +2,7 @@ package com.blueteam.historyEdu.controllers;
 
 import com.blueteam.historyEdu.components.JwtTokenUtils;
 import com.blueteam.historyEdu.components.LocalizationUtils;
+import com.blueteam.historyEdu.dtos.ChangePasswordDTO;
 import com.blueteam.historyEdu.dtos.User.UserDTO;
 import com.blueteam.historyEdu.dtos.User.UserLoginDTO;
 import com.blueteam.historyEdu.entities.Token;
@@ -19,6 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
@@ -155,6 +157,24 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder()
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .message("An unexpected error occurred. Please try again later.")
+                    .build());
+        }
+    }
+
+    @PutMapping("/update-password/{userId}")
+    public ResponseEntity<ResponseObject> changePassword(
+            @PathVariable long userId,
+            @Valid @RequestBody ChangePasswordDTO changePasswordDTO) {
+        try {
+            userService.changePassword(userId, changePasswordDTO);
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .status(HttpStatus.OK)
+                    .message(MessageKeys.CHANGE_PASSWORD_SUCCESSFULLY)
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder()
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .message(e.getMessage())
                     .build());
         }
     }
