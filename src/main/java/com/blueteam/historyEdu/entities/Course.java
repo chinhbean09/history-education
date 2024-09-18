@@ -17,9 +17,15 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+//
+//    @Column(name = "enrollmentCount", nullable = false)
+//    private Long enrollmentCount;
 
-    @Column(name = "enrollmentCount", nullable = false)
-    private Long enrollmentCount;
+    @Column(name="course_name", nullable = false)
+    private String courseName;
+
+    @Column(name = "introduction_video", nullable = false)
+    private String introductionVideoUrl;
 
     @Column(name = "description", nullable = false)
     private String description;
@@ -30,10 +36,10 @@ public class Course {
     @Column(name = "totalDuration", nullable = false)
     private Long totalDuration;
 
-    @Column(name = "totalChapter", nullable = false)
+    @Column(name = "total-chapter", nullable = false)
     private Long totalChapter;
 
-    @Column(name = "totalVideos", nullable = false)
+    @Column(name = "total-videos", nullable = false)
     private Long totalVideos;
 
     @Column(name = "price", nullable = false)
@@ -41,6 +47,15 @@ public class Course {
 
     @Column(name = "rating", nullable = false)
     private Long rating;
+
+    @Column(name = "whats_learned")
+    @ElementCollection
+    private List<String> whatsLearned;
+
+    @Column(name = "requirement")
+    @ElementCollection
+    private List<String> requireToPass;
+
 
     @OneToMany(mappedBy = "course")
     private List<UserProgress> userProgressList;
