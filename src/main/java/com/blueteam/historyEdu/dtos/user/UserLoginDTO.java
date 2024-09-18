@@ -1,4 +1,4 @@
-package com.blueteam.historyEdu.dtos.User;
+package com.blueteam.historyEdu.dtos.user;
 
 import com.blueteam.historyEdu.validators.EmailOrPhone;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -4,14 +4,17 @@ import com.blueteam.historyEdu.components.JwtTokenUtils;
 import com.blueteam.historyEdu.components.LocalizationUtils;
 import com.blueteam.historyEdu.dtos.ChangePasswordDTO;
 import com.blueteam.historyEdu.dtos.DataMailDTO;
-import com.blueteam.historyEdu.dtos.User.UserDTO;
-import com.blueteam.historyEdu.dtos.User.UserLoginDTO;
+import com.blueteam.historyEdu.dtos.user.UserDTO;
+import com.blueteam.historyEdu.dtos.user.UserLoginDTO;
 import com.blueteam.historyEdu.entities.Role;
+import com.blueteam.historyEdu.entities.Token;
 import com.blueteam.historyEdu.entities.User;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
 import com.blueteam.historyEdu.repositories.IRoleRepository;
+import com.blueteam.historyEdu.repositories.ITokenRepository;
 import com.blueteam.historyEdu.repositories.IUserRepository;
+import com.blueteam.historyEdu.responses.User.UserResponse;
 import com.blueteam.historyEdu.services.sendmails.MailService;
 import com.blueteam.historyEdu.utils.MailTemplate;
 import com.blueteam.historyEdu.utils.MessageKeys;
@@ -22,18 +25,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +55,7 @@ public class UserService implements IUserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final AuthenticationManager authenticationManager;
     private final MailService mailService;
+    private final ITokenRepository TokenRepository;
 
     @Override
     @Transactional
@@ -181,5 +191,63 @@ public class UserService implements IUserService {
             logger.warn("Authentication failed for user: {}", loginIdentifier, e);
             throw e;
         }
+    }
+
+    @Override
+    @Transactional
+    public void blockOrEnable(Long userId, Boolean active) throws DataNotFoundException, PermissionDenyException {
+        User existingUser = UserRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException(MessageKeys.USER_NOT_FOUND));
+        existingUser.setActive(active);
+
+        if(existingUser.getRole().getRoleName().equals(Role.ADMIN)) {
+            throw new PermissionDenyException("Not allowed to block Admin account");
+        }
+        UserRepository.save(existingUser);
+        }
+    @Override
+    public Page<UserResponse> getAllUsers(String keyword, PageRequest pageRequest) {
+        Page<User> usersPage;
+        usersPage = UserRepository.searchUsers(keyword, pageRequest);
+        return usersPage.map(UserResponse::fromUser);
+    }
+
+    @Override
+    public User getUser(Long id) throws DataNotFoundException {
+        return UserRepository.findById(id).orElseThrow(() -> new DataNotFoundException("User not found"));
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+        Optional<User> optionalUser = UserRepository.findById(userId);
+        List<Token> tokens = TokenRepository.findByUserId(userId);
+        TokenRepository.deleteAll(tokens);
+        optionalUser.ifPresent(UserRepository::delete);
+    }
+    @Override
+    public void updateUser(UserDTO userDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        currentUser.setEmail(userDTO.getEmail());
+        currentUser.setFullName(userDTO.getFullName());
+        currentUser.setPhoneNumber(userDTO.getPhoneNumber());
+        currentUser.setAddress(userDTO.getAddress());
+        currentUser.setDateOfBirth(userDTO.getDateOfBirth());
+        currentUser.setGender(userDTO.getGender());
+        UserRepository.save(currentUser);
+    }
+
+    @Override
+    public User getUserDetailsFromRefreshToken(String refreshToken) throws Exception {
+        Token existingToken = TokenRepository.findByRefreshToken(refreshToken);
+        return getUserDetailsFromToken(existingToken.getToken());
+    }
+
+    @Override
+    public List<UserResponse> getAllUsers(Long roleId) {
+        List<User> users = UserRepository.findByRoleId(roleId);
+        return users.stream()
+                .map(UserResponse::fromUser)
+                .collect(Collectors.toList());
     }
 }
