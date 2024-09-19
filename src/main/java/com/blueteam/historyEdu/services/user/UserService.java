@@ -10,6 +10,7 @@ import com.blueteam.historyEdu.entities.Role;
 import com.blueteam.historyEdu.entities.Token;
 import com.blueteam.historyEdu.entities.User;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
+import com.blueteam.historyEdu.exceptions.InvalidParamException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
 import com.blueteam.historyEdu.repositories.IRoleRepository;
 import com.blueteam.historyEdu.repositories.ITokenRepository;
@@ -18,6 +19,8 @@ import com.blueteam.historyEdu.responses.User.UserResponse;
 import com.blueteam.historyEdu.services.sendmails.MailService;
 import com.blueteam.historyEdu.utils.MailTemplate;
 import com.blueteam.historyEdu.utils.MessageKeys;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
@@ -37,11 +41,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,6 +59,7 @@ public class UserService implements IUserService {
     private final AuthenticationManager authenticationManager;
     private final MailService mailService;
     private final ITokenRepository TokenRepository;
+    private final Cloudinary cloudinary;
 
     @Override
     @Transactional
@@ -249,5 +253,35 @@ public class UserService implements IUserService {
         return users.stream()
                 .map(UserResponse::fromUser)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public User updateUserAvatar(long id, MultipartFile avatar) {
+        User user = UserRepository.findById(id).orElse(null);
+        if (user != null && avatar != null && !avatar.isEmpty()) {
+            try {
+                // Check if the uploaded file is an image
+                MediaType mediaType = MediaType.parseMediaType(Objects.requireNonNull(avatar.getContentType()));
+                if (!mediaType.isCompatibleWith(MediaType.IMAGE_JPEG) &&
+                        !mediaType.isCompatibleWith(MediaType.IMAGE_PNG)) {
+                    throw new InvalidParamException(localizationUtils.getLocalizedMessage(MessageKeys.UPLOAD_IMAGES_FILE_MUST_BE_IMAGE));
+                }
+
+                // Upload the avatar to Cloudinary
+                Map uploadResult = cloudinary.uploader().upload(avatar.getBytes(),
+                        ObjectUtils.asMap("folder", "user_avatar/" + id, "public_id", avatar.getOriginalFilename()));
+
+                // Get the URL of the uploaded avatar
+                String avatarUrl = uploadResult.get("secure_url").toString();
+                user.setAvatar(avatarUrl);
+
+                // Save the updated user entity
+                UserRepository.save(user);
+                return user;
+            } catch (IOException e) {
+                logger.error("Failed to upload avatar for user with ID {}", id, e);
+            }
+        }
+        return null;
     }
 }

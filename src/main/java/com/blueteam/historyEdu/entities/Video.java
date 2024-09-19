@@ -30,15 +30,11 @@ public class Video {
     @Column(name = "create_at")
     private LocalDateTime createAt;
 
-    @Column(name="more_infomation")
+    @Column(name="more_information")
     private String moreInformation;
 
     @ManyToOne
     @JoinColumn(name = "chapter_id", nullable = false)
-    private Chapter chapter;
-
-
-//    @OneToMany(mappedBy = "video")
-//    private List<Material> materials;
-
+    private Chapter chapter;  // Correctly sets chapter_id in videos
 }
+

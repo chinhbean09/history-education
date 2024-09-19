@@ -1,7 +1,9 @@
 package com.blueteam.historyEdu.entities;
+import com.blueteam.historyEdu.entities.convert.StringListConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -11,7 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 public class Course {
 
     @Id
@@ -24,13 +25,13 @@ public class Course {
     @Column(name="course_name", nullable = false)
     private String courseName;
 
-    @Column(name = "introduction_video", nullable = false)
+    @Column(name = "introduction_video", nullable = true)
     private String introductionVideoUrl;
 
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "image", nullable = false)
+    @Column(name = "image", nullable = true)
     private String image;
 
     @Column(name = "total_duration", nullable = false)
@@ -48,19 +49,25 @@ public class Course {
     @Column(name = "rating", nullable = false)
     private Long rating;
 
-    @Column(name = "whats_learned")
-    @ElementCollection
+    @Convert(converter = StringListConverter.class)
+    @Column(name = "whats_learned", columnDefinition = "TEXT", nullable = false)
     private List<String> whatsLearned;
 
-    @Column(name = "requirement")
-    @ElementCollection
+    @Convert(converter = StringListConverter.class)
+    @Column(name = "requirement", columnDefinition = "TEXT", nullable = false)
     private List<String> requireToPass;
 
+    // Initialize the lists to avoid null pointer issues
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Chapter> chapters = new ArrayList<>();
 
     @OneToMany(mappedBy = "course")
-    private List<UserProgress> userProgressList;
+    private List<UserProgress> userProgressList = new ArrayList<>();
 
     @OneToMany(mappedBy = "course")
-    private List<User> users;
+    private List<User> users = new ArrayList<>();
 
 }

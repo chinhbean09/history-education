@@ -8,6 +8,7 @@ import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.responses.User.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -36,5 +37,7 @@ public interface IUserService {
     User getUserDetailsFromRefreshToken(String refreshToken) throws Exception;
 
     List<UserResponse> getAllUsers(Long roleId);
+
+    User updateUserAvatar(long id, MultipartFile avatar);
 
 }

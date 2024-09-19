@@ -12,16 +12,24 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class Chapter {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long chapterId;
+    private Long id;
 
     @Column(name = "title", nullable = false)
-    private String title;
+    private String chapterName;
 
     @Column(name = "description", nullable = true)
     private String description;
 
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
-    private List<Video> videos;
+    @Column(name = "url", nullable = true)
+    private String url;
+
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Video> videos;  // Should not cause video_id to appear in chapters
+
+    @ManyToOne
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
 }
