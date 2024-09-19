@@ -46,4 +46,22 @@ public class MessageKeys {
     public static final String AUTH_TOKEN_MISSING_OR_INVALID = "auth.token_missing_or_invalid";
     public static final String PARTNER_CANNOT_VIEW_OTHER_HOTELS = "hotel.list_hotel.partner_cannot_view_other_hotels";
     public static final String TOKEN_NO_IDENTIFIER = "auth.token_no_identifier";
+
+    public static final String PERMISSION_DENIED = "permission_denied";
+    public static final String COURSE_ALREADY_EXISTS = "course.create_course.course_already_exists";
+    public static final String COURSE_NOT_FOUND = "course.update_course.course_not_found";
+    public static final String COURSE_CREATED_SUCCESSFULLY = "course.create_course.course_created_successfully";
+    public static final String COURSE_UPDATED_SUCCESSFULLY = "course.update_course.course_updated_successfully";
+    public static final String COURSE_DELETED_SUCCESSFULLY = "course.update_course.course_deleted_successfully";
+    public static final String COURSE_FETCHED_SUCCESSFULLY = "course.get_course.course_fetched_successfully";
+    public static final String COURSE_IMAGE_UPDATED_SUCCESSFULLY = "course.update_course.course_image_updated_successfully";
+
+    public static final String CHAPTER_CREATED_SUCCESSFULLY = "chapter.create_chapter.chapter_created_successfully";
+    public static final String CHAPTER_NOT_FOUND = "chapter.update_chapter.chapter_not_found";
+    public static final String CHAPTER_UPDATED_SUCCESSFULLY = "chapter.update_chapter.chapter_updated_successfully";
+    public static final String CHAPTER_DELETED_SUCCESSFULLY ="chapter.update_chapter.chapter_deleted_successfully";
+
+    public static final String REVIEW_CREATED_SUCCESSFULLY = "review.create_review.review_created_successfully";
+    public static final String REVIEW_NOT_FOUND = "review.update_review.review_not_found";
+    public static final String REVIEW_DELETED_SUCCESSFULLY = "review.update_review.review_deleted_successfully";
 }
