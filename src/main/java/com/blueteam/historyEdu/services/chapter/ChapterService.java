@@ -16,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class ChapterService implements IChapterService {
@@ -69,10 +71,18 @@ public class ChapterService implements IChapterService {
     @Override
     @Transactional
     public void deleteChapter(Long chapterId) throws DataNotFoundException {
-        if (chapterRepository.existsById(chapterId)) {
-            chapterRepository.deleteById(chapterId);
-            // Flush the session
-            chapterRepository.flush(); // Optional, to ensure immediate execution
+        Optional<Chapter> chapter = chapterRepository.findById(chapterId);
+
+        if (chapter.isPresent()) {
+            Chapter chapterEntity = chapter.get();
+            // Remove the chapter from the course's chapter list if necessary
+            Course course = chapterEntity.getCourse();
+            course.getChapters().remove(chapterEntity);  // Optional: update the course's list
+            // Perform delete operation
+            chapterRepository.delete(chapterEntity);
+            chapterRepository.flush();  // Ensure immediate execution
+
+            System.out.println("Chapter deleted: " + chapterEntity.getId());
         } else {
             throw new DataNotFoundException(MessageKeys.CHAPTER_NOT_FOUND);
         }
