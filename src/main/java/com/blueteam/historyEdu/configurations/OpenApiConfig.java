@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "Booking Hotel",
+                title = "History Education",
                 version = "1.0.0",
-                description = "Hotel booking application"
+                description = "Learning history application"
         ),
         servers = {
                 @Server(url = "http://localhost:8080", description = "Local Development Server"),
@@ -20,13 +20,6 @@ import org.springframework.context.annotation.Configuration;
         }
 )
 
-@SecurityScheme(
-        name = "bearer-key", // Can be any name, used to reference this scheme in the @SecurityRequirement annotation
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT",
-        in = SecuritySchemeIn.HEADER
-)
 @Configuration
 public class OpenApiConfig {
 
