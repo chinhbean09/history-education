@@ -10,13 +10,13 @@ import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "History Education",
+                title = "Booking Hotel",
                 version = "1.0.0",
-                description = "Learning history application"
+                description = "Hotel booking application"
         ),
         servers = {
                 @Server(url = "http://localhost:8080", description = "Local Development Server"),
-                @Server(url = "http://********:8081", description = "Production Server"),
+                @Server(url = "http://103.77.246.24:8081", description = "Production Server"),
         }
 )
 
