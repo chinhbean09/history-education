@@ -64,4 +64,9 @@ public class MessageKeys {
     public static final String REVIEW_CREATED_SUCCESSFULLY = "review.create_review.review_created_successfully";
     public static final String REVIEW_NOT_FOUND = "review.update_review.review_not_found";
     public static final String REVIEW_DELETED_SUCCESSFULLY = "review.update_review.review_deleted_successfully";
+
+    public static final String VIDEO_CREATED_SUCCESSFULLY = "video.create_video.video_created_successfully";
+    public static final String VIDEO_NOT_FOUND = "video.update_video.video_not_found";
+    public static final String VIDEO_UPDATED_SUCCESSFULLY = "video.update_video.video_updated_successfully";
+    public static final String VIDEO_DELETED_SUCCESSFULLY = "video.update_video.video_deleted_successfully";
 }

@@ -14,6 +14,7 @@ public class CourseDTO {
 
     private String courseName;
     private String moreInformation;
+    private String description;
     private String image;
     private String introductionVideoUrl;
     private Long totalDuration;
@@ -28,7 +29,8 @@ public class CourseDTO {
 
         return Course.builder()
                 .courseName(courseName)
-                .description(moreInformation)
+                .description(description)
+                .moreInformation(moreInformation)
                 .image(image)
                 .introductionVideoUrl(introductionVideoUrl)
                 .totalDuration(totalDuration)
