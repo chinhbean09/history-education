@@ -3,6 +3,8 @@ package com.blueteam.historyEdu.responses;
 import com.blueteam.historyEdu.entities.Video;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -10,19 +12,23 @@ import lombok.*;
 @Builder
 public class VideoResponse {
 
-    private Long id;
-    private String title;
-    private String description;
-    private String videoUrl;
+    private Long videoId;
+    private String type;
+    private String videoName;
+    private String lessonVideo;
+    private Integer duration;
     private String moreInformation;
+    private List<String> supportingMaterials;
 
     public static VideoResponse fromVideo(Video video) {
         return VideoResponse.builder()
-                .id(video.getId())
-                .title(video.getTitle())
-                .description(video.getDescription())
-                .videoUrl(video.getVideoUrl())
+                .videoId(video.getId())
+                .type(video.getType())
+                .videoName(video.getVideoName())
+                .lessonVideo(video.getLessonVideo())
                 .moreInformation(video.getMoreInformation())
+                .duration(video.getDuration())
+                .supportingMaterials(video.getSupportingMaterials())
                 .build();
     }
 }

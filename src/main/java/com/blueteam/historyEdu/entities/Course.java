@@ -31,6 +31,9 @@ public class Course {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @Column(name = "more_information", nullable = false)
+    private String moreInformation;
+
     @Column(name = "image", nullable = true)
     private String image;
 
