@@ -5,6 +5,8 @@ import com.blueteam.historyEdu.entities.Course;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.util.ArrayList;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +23,7 @@ public class ChapterDTO {
         return Chapter.builder()
                 .chapterName(chapterName)
                 .course(course) // Ensure course is set in the entity
+                .lessons(new ArrayList<>())
                 .build();
     }
 }

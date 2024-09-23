@@ -14,7 +14,6 @@ import java.util.List;
 public class VideoDTO {
 
     private String videoName;
-    private String type;
     private String lessonVideo;
     private Integer duration;
     private String moreInformation;
@@ -23,7 +22,6 @@ public class VideoDTO {
     public Video toEntity() {
         return Video.builder()
                 .videoName(videoName)
-                .type(type)
                 .lessonVideo(lessonVideo)
                 .moreInformation(moreInformation)
                 .supportingMaterials(supportingMaterials)

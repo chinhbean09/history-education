@@ -13,7 +13,6 @@ import java.util.List;
 public class VideoResponse {
 
     private Long videoId;
-    private String type;
     private String videoName;
     private String lessonVideo;
     private Integer duration;
@@ -23,7 +22,6 @@ public class VideoResponse {
     public static VideoResponse fromVideo(Video video) {
         return VideoResponse.builder()
                 .videoId(video.getId())
-                .type(video.getType())
                 .videoName(video.getVideoName())
                 .lessonVideo(video.getLessonVideo())
                 .moreInformation(video.getMoreInformation())

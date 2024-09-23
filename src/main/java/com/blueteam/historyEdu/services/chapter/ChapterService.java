@@ -3,11 +3,13 @@ package com.blueteam.historyEdu.services.chapter;
 import com.blueteam.historyEdu.dtos.ChapterDTO;
 import com.blueteam.historyEdu.entities.Chapter;
 import com.blueteam.historyEdu.entities.Course;
+import com.blueteam.historyEdu.entities.Lesson;
 import com.blueteam.historyEdu.entities.User;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
 import com.blueteam.historyEdu.repositories.IChapterRepository;
 import com.blueteam.historyEdu.repositories.ICourseRepository;
+import com.blueteam.historyEdu.repositories.ILessonRepository;
 import com.blueteam.historyEdu.responses.CourseResponse;
 import com.blueteam.historyEdu.utils.MessageKeys;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class ChapterService implements IChapterService {
 
     private final IChapterRepository chapterRepository;
     private final ICourseRepository courseRepository;
+    private final ILessonRepository lessonRepository;
 
     @Override
     @Transactional
@@ -42,6 +45,13 @@ public class ChapterService implements IChapterService {
             chapterRepository.save(chapter);
             // Add the chapter to the course's chapter list
             course.getChapters().add(chapter);
+
+            Lesson lesson = Lesson.builder()
+                    .chapter(chapter)
+                    .build();
+            lessonRepository.save(lesson);
+            chapter.getLessons().add(lesson);
+
             return CourseResponse.fromCourse(course); // Return updated course response
         } else {
             throw new PermissionDenyException(MessageKeys.PERMISSION_DENIED);
