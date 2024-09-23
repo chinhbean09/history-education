@@ -8,6 +8,7 @@ import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.repositories.IChapterRepository;
 import com.blueteam.historyEdu.repositories.IQuizAttemptRepository;
 import com.blueteam.historyEdu.repositories.IQuizRepository;
+import com.blueteam.historyEdu.services.question.IQuestionService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,8 @@ public class QuizService implements IQuizService  {
     private final IQuizRepository quizRepository;
     private final IChapterRepository chapterRepository;
     private final IQuizAttemptRepository quizAttemptRepository;
+    private final IQuestionService questionService;
+
     @Override
     public List<Quiz> getAllQuizzes() {
         return quizRepository.findAll();
@@ -47,7 +50,7 @@ public class QuizService implements IQuizService  {
         for (Question question : questions) {
             question.setQuiz(quiz); // Thiết lập mối quan hệ hai chiều
         }
-        quiz.setQuestions(questions); // Đặt danh sách câu hỏi vào quiz
+//        quiz.setQuestions(questions); // Đặt danh sách câu hỏi vào quiz
 
         return quizRepository.save(quiz); // Lưu quiz cùng với các câu hỏi
     }
@@ -83,41 +86,45 @@ public class QuizService implements IQuizService  {
 //        }
 //        return correctCount; // Return the count of correct answers
 //    }
-    @Override
-    public QuizResultDTO checkQuiz(QuizAttemptDTO quizAttemptDTO, User user) {
-        Quiz quiz = quizRepository.findById(quizAttemptDTO.getQuizId())
-                .orElseThrow(() -> new RuntimeException("Quiz not found"));
-        Map<Long, String> userAnswers = quizAttemptDTO.getAnswers();
+@Override
+public QuizResultDTO checkQuiz(QuizAttemptDTO quizAttemptDTO, User user) {
+    Quiz quiz = quizRepository.findById(quizAttemptDTO.getQuizId())
+            .orElseThrow(() -> new RuntimeException("Quiz not found"));
 
-        int totalQuestions = quiz.getQuestions().size();
-        int correctAnswers = 0;
+    // Lấy danh sách câu hỏi từ questionService
+    List<Question> questions = questionService.getAllQuestionsByQuizId(quiz.getId());
 
-        for (Question question : quiz.getQuestions()) {
-            String userAnswer = userAnswers.get(question.getId());
-            if (userAnswer != null && userAnswer.equalsIgnoreCase(question.getCorrectAnswer())) {
-                correctAnswers++;
-            }
+    Map<Long, String> userAnswers = quizAttemptDTO.getAnswers();
+    int totalQuestions = questions.size();
+    int correctAnswers = 0;
+
+    for (Question question : questions) {
+        String userAnswer = userAnswers.get(question.getId());
+        if (userAnswer != null && userAnswer.equalsIgnoreCase(question.getCorrectAnswer())) {
+            correctAnswers++;
         }
-
-        int score = (correctAnswers * 100) / totalQuestions;
-        boolean isPass = score >= 80;
-
-        // Lưu quiz attempt
-        QuizAttempt quizAttempt = new QuizAttempt();
-        quizAttempt.setQuiz(quiz);
-        quizAttempt.setUser(user);
-        quizAttempt.setAttemptDate(LocalDateTime.now());
-        quizAttempt.setScore(score);
-
-        quizAttemptRepository.save(quizAttempt);
-
-        // Trả về kết quả
-        QuizResultDTO resultDTO = new QuizResultDTO();
-        resultDTO.setScore(score);
-        resultDTO.setPass(isPass);
-
-        return resultDTO;
     }
+
+    // Tính tỷ lệ phần trăm điểm
+    int score = (totalQuestions > 0) ? (correctAnswers * 100) / totalQuestions : 0;
+    boolean isPass = score >= 80;
+
+    // Lưu quiz attempt
+    QuizAttempt quizAttempt = new QuizAttempt();
+    quizAttempt.setQuiz(quiz);
+    quizAttempt.setUser(user);
+    quizAttempt.setAttemptDate(LocalDateTime.now());
+    quizAttempt.setScore(score);
+
+    quizAttemptRepository.save(quizAttempt);
+
+    // Trả về kết quả
+    QuizResultDTO resultDTO = new QuizResultDTO();
+    resultDTO.setScore(score);
+    resultDTO.setPass(isPass);
+
+    return resultDTO;
+}
 
 
 

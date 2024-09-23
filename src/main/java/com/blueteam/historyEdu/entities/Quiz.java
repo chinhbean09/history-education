@@ -7,17 +7,17 @@
     import lombok.*;
 
     import java.time.LocalDateTime;
+    import java.util.ArrayList;
     import java.util.List;
 
-    @Data
-    @Builder
     @Entity
     @Table(name = "quizzes")
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    @ToString(exclude = {"chapter"})  // Exclude relationships to prevent recursion
+    @Builder
+//    @ToString(exclude = {"chapter"})  // Exclude relationships to prevent recursion
     public class Quiz {
 
         @Id
@@ -30,11 +30,12 @@
         @Column(name = "expiration-time")
         private int expirationTime;
 
-        @ManyToOne(fetch = FetchType.EAGER)
+        @ManyToOne
         @JoinColumn(name = "chapter_id", nullable = false)
+        @JsonBackReference
         private Chapter chapter;
 
         @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-        private List<Question> questions;
+        private List<Question> questions = new ArrayList<>();;
 
     }
