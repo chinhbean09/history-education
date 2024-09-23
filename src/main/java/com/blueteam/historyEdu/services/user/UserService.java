@@ -65,7 +65,7 @@ public class UserService implements IUserService {
     @Transactional
     public User registerUser(UserDTO userDTO) throws Exception {
         String phoneNumber = userDTO.getPhoneNumber();
-        if (UserRepository.existsByPhoneNumber(phoneNumber)) {
+        if (UserRepository.existsByPhoneNumber(phoneNumber) && userDTO.getPhoneNumber() != null) {
             throw new DataIntegrityViolationException(localizationUtils.getLocalizedMessage(MessageKeys.PHONE_NUMBER_ALREADY_EXISTS));
         }
 

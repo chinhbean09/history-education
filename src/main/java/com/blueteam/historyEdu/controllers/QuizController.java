@@ -1,8 +1,10 @@
 package com.blueteam.historyEdu.controllers;
 
-import com.blueteam.historyEdu.dtos.quiz.QuizAnswersDTO;
+import com.blueteam.historyEdu.dtos.quiz.QuizAttemptDTO;
 import com.blueteam.historyEdu.dtos.quiz.QuizDTO;
+import com.blueteam.historyEdu.dtos.quiz.QuizResultDTO;
 import com.blueteam.historyEdu.entities.Quiz;
+import com.blueteam.historyEdu.entities.User;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.responses.QuizResponse;
 import com.blueteam.historyEdu.services.quiz.IQuizService;
@@ -10,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -73,11 +77,21 @@ public class QuizController {
         return ResponseEntity.noContent().build();
     }
 
+//    @PostMapping("/check-answers")
+//    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+//    public ResponseEntity<Integer> checkAnswers(@RequestBody QuizAnswersDTO quizAnswersDTO) {
+//        int correctCount = quizService.checkAnswers(quizAnswersDTO.getQuizId(), quizAnswersDTO.getUserAnswers());
+//        return ResponseEntity.ok(correctCount);
+//    }
+
     @PostMapping("/check-answers")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Integer> checkAnswers(@RequestBody QuizAnswersDTO quizAnswersDTO) {
-        int correctCount = quizService.checkAnswers(quizAnswersDTO.getQuizId(), quizAnswersDTO.getUserAnswers());
-        return ResponseEntity.ok(correctCount);
+    public ResponseEntity<QuizResultDTO> checkQuiz(@RequestBody QuizAttemptDTO quizAttemptDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+
+        QuizResultDTO resultDTO = quizService.checkQuiz(quizAttemptDTO, currentUser);
+        return ResponseEntity.ok(resultDTO);
     }
 
 }

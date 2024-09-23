@@ -96,7 +96,7 @@ public class UserController {
                 throw new Exception("Invalid email");
             }
         }
-        if (UserRepository.existsByPhoneNumber(userDTO.getPhoneNumber())) {
+        if (UserRepository.existsByPhoneNumber(userDTO.getPhoneNumber()) && userDTO.getPhoneNumber() != null) {
             return ResponseEntity.badRequest().body(ResponseObject.builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .data(null)

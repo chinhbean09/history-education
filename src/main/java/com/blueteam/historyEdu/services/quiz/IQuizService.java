@@ -1,7 +1,10 @@
 package com.blueteam.historyEdu.services.quiz;
 
+import com.blueteam.historyEdu.dtos.quiz.QuizAttemptDTO;
 import com.blueteam.historyEdu.dtos.quiz.QuizDTO;
+import com.blueteam.historyEdu.dtos.quiz.QuizResultDTO;
 import com.blueteam.historyEdu.entities.Quiz;
+import com.blueteam.historyEdu.entities.User;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 
 import java.util.List;
@@ -20,6 +23,9 @@ public interface IQuizService {
 
      void deleteQuiz(Long id) throws DataNotFoundException;
 
-     int checkAnswers(Long quizId, Map<Long, String> userAnswers);
+//     int checkAnswers(Long quizId, Map<Long, String> userAnswers);
 
-    }
+      QuizResultDTO checkQuiz(QuizAttemptDTO quizAttemptDTO, User user);
+
+
+     }
