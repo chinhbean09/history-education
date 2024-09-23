@@ -1,42 +1,40 @@
-package com.blueteam.historyEdu.entities;
+    package com.blueteam.historyEdu.entities;
 
-import jakarta.persistence.*;
-import lombok.*;
+    import com.fasterxml.jackson.annotation.JsonBackReference;
+    import com.fasterxml.jackson.annotation.JsonIgnore;
+    import com.fasterxml.jackson.annotation.JsonManagedReference;
+    import jakarta.persistence.*;
+    import lombok.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
+    import java.time.LocalDateTime;
+    import java.util.List;
 
-@Data
-@Builder
-@Entity
-@Table(name = "quizzes")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class Quiz {
+    @Data
+    @Builder
+    @Entity
+    @Table(name = "quizzes")
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString(exclude = {"chapter"})  // Exclude relationships to prevent recursion
+    public class Quiz {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    @Column(name = "password")
-    private String password;
+        @Column(name = "title", nullable = false)
+        private String title;
 
-    @Column(name = "question")
-    private String question;
+        @Column(name = "expiration-time")
+        private int expirationTime;
 
-    @Column(name = "expiration_date")
-    private LocalDateTime expirationTime;
+        @ManyToOne(fetch = FetchType.EAGER)
+        @JoinColumn(name = "chapter_id", nullable = false)
+        private Chapter chapter;
 
-    @Column(name = "is_verified")
-    private boolean verified;
+        @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+        private List<Question> questions;
 
-    @ManyToOne
-    @JoinColumn(name = "chapter_id", nullable = false)
-    private Chapter chapter;
-
-    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Question> questions;
-
-}
+    }
