@@ -21,34 +21,34 @@ public class QuizController {
 
     private final IQuizService quizService;
 
-    @GetMapping
+    @GetMapping("/get-all-quizzes")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public List<Quiz> getAllQuizzes() {
         return quizService.getAllQuizzes();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get-quiz-by-id/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<Quiz> getQuizById(@PathVariable Long id) throws DataNotFoundException {
         Optional<Quiz> quiz = quizService.getQuizById(id);
         return quiz.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/create-quiz")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<Quiz> createQuiz(@RequestBody Quiz quiz) {
         Quiz createdQuiz = quizService.createQuiz(quiz);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdQuiz);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update-quiz/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @Transactional
     public ResponseEntity<Quiz> updateQuiz(@PathVariable Long id, @RequestBody Quiz quizDetails) throws DataNotFoundException {
         Quiz updatedQuiz = quizService.updateQuiz(id, quizDetails);
         return ResponseEntity.ok(updatedQuiz);
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete-quiz/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @Transactional
     public ResponseEntity<Void> deleteQuiz(@PathVariable Long id) throws DataNotFoundException {

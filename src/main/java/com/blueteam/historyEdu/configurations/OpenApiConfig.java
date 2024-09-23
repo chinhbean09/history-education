@@ -19,6 +19,13 @@ import org.springframework.context.annotation.Configuration;
                 @Server(url = "http://103.77.246.24:8081", description = "Production Server"),
         }
 )
+@SecurityScheme(
+        name = "bearer-key", // Can be any name, used to reference this scheme in the @SecurityRequirement annotation
+        type = SecuritySchemeType.HTTP,
+        scheme = "bearer",
+        bearerFormat = "JWT",
+        in = SecuritySchemeIn.HEADER
+)
 
 @Configuration
 public class OpenApiConfig {
