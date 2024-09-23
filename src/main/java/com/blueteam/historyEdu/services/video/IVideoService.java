@@ -7,7 +7,7 @@ import com.blueteam.historyEdu.responses.CourseResponse;
 
 public interface IVideoService {
 
-    CourseResponse createVideo(Long chapterId,VideoDTO videoDTO) throws DataNotFoundException, PermissionDenyException;
+    CourseResponse createVideo(Long lessonId,VideoDTO videoDTO) throws DataNotFoundException, PermissionDenyException;
 
     CourseResponse updateVideo(Long videoId, VideoDTO videoDTO) throws DataNotFoundException, PermissionDenyException;
 

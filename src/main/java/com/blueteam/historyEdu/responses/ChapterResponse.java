@@ -15,18 +15,18 @@ public class ChapterResponse {
 
     private Long id;
     private String chapterName;
-    private List<VideoResponse> videos;
+    private List<LessonReponse> lesson;
 
     public static ChapterResponse fromChapter(Chapter chapter) {
         // Handle potential null videos
-        List<VideoResponse> videos = (chapter.getVideos() != null) ?
-                chapter.getVideos().stream().map(VideoResponse::fromVideo).toList() :
+        List<LessonReponse> lesson = (chapter.getLessons() != null) ?
+                chapter.getLessons().stream().map(LessonReponse::fromLesson).toList() :
                 new ArrayList<>();
 
         return ChapterResponse.builder()
                 .id(chapter.getId())
                 .chapterName(chapter.getChapterName())
-                .videos(videos)
+                .lesson(lesson)
                 .build();
     }
 }

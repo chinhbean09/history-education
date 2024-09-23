@@ -69,4 +69,10 @@ public class MessageKeys {
     public static final String VIDEO_NOT_FOUND = "video.update_video.video_not_found";
     public static final String VIDEO_UPDATED_SUCCESSFULLY = "video.update_video.video_updated_successfully";
     public static final String VIDEO_DELETED_SUCCESSFULLY = "video.update_video.video_deleted_successfully";
+
+    public static final String LESSON_NOT_FOUND = "lesson.update_lesson.lesson_not_found";
+    public static final String INFORMATION_NOT_FOUND = "information.update_information.information_not_found";
+    public static final String INFORMATION_CREATED_SUCCESSFULLY = "information.create_information.information_created_successfully";
+    public static final String INFORMATION_UPDATED_SUCCESSFULLY = "information.update_information.information_updated_successfully";
+    public static final String INFORMATION_DELETED_SUCCESSFULLY = "information.update_information.information_deleted_successfully";
 }
