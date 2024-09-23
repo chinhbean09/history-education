@@ -1,5 +1,6 @@
 package com.blueteam.historyEdu.services.quiz;
 
+import com.blueteam.historyEdu.dtos.quiz.QuizDTO;
 import com.blueteam.historyEdu.entities.Quiz;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 
@@ -13,7 +14,7 @@ public interface IQuizService {
 
      Optional<Quiz> getQuizById(Long id) throws DataNotFoundException;
 
-     Quiz createQuiz(Quiz quiz);
+     Quiz createQuiz(QuizDTO quiz);
 
      Quiz updateQuiz(Long id, Quiz quizDetails) throws DataNotFoundException;
 

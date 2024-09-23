@@ -28,9 +28,10 @@ public class Question {
     @JoinColumn(name = "quiz_id", nullable = false)
     private Quiz quiz;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "question_answers", joinColumns = @JoinColumn(name = "question_id"))
     @Column(name = "answer")
     private List<String> answers;
+
 
 }

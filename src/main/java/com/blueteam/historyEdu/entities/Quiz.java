@@ -20,23 +20,18 @@ public class Quiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "password")
-    private String password;
+    @Column(name = "title", nullable = false)
+    private String title;
 
-    @Column(name = "question")
-    private String question;
-
-    @Column(name = "expiration_date")
-    private LocalDateTime expirationTime;
-
-    @Column(name = "is_verified")
-    private boolean verified;
+    @Column(name = "expiration-time")
+    private int expirationTime;
 
     @ManyToOne
     @JoinColumn(name = "chapter_id", nullable = false)
     private Chapter chapter;
 
-    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Question> questions;
+
 
 }

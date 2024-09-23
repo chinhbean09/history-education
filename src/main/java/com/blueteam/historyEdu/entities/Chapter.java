@@ -26,8 +26,8 @@ public class Chapter {
     @Column(name = "url", nullable = true)
     private String url;
 
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Video> videos;  // Should not cause video_id to appear in chapters
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Video> videos;
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
