@@ -2,9 +2,10 @@ package com.blueteam.historyEdu.repositories;
 
 import com.blueteam.historyEdu.entities.Chapter;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+@Repository
 public interface IChapterRepository extends JpaRepository<Chapter, Long> {
     List<Chapter> findAllByCourseId(Long courseId);
 }

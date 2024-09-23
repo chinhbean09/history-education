@@ -28,4 +28,10 @@ public class QuizAttempt {
 
     @Column(name = "score")
     private Integer score;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user; // Assuming you have a User entity
+
+
 }
