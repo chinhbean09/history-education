@@ -1,5 +1,6 @@
 package com.blueteam.historyEdu.dtos.quiz;
 
+import com.blueteam.historyEdu.dtos.QuestionDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -12,14 +13,14 @@ import com.blueteam.historyEdu.entities.Question;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuizDTO {
-    @NotBlank
+//    @NotBlank
     private String title;
 
     @JsonProperty("expiration-time")
     private int expirationTime;
 
-    @JsonProperty("chapter_id")
-    private Long chapterId;
+    @JsonProperty("lesson_id")
+    private Long lessonId;
 
-    private List<Question> questions;
+    private List<QuestionDTO> questions;
 }

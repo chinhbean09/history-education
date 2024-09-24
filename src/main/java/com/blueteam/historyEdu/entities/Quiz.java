@@ -30,10 +30,13 @@
         @Column(name = "expiration-time")
         private int expirationTime;
 
+//        @ManyToOne
+//        @JoinColumn(name = "chapter_id", nullable = false)
+//        @JsonBackReference
+//        private Chapter chapter;
         @ManyToOne
-        @JoinColumn(name = "chapter_id", nullable = false)
-        @JsonBackReference
-        private Chapter chapter;
+        @JoinColumn(name = "lesson_id", nullable = false)
+        private Lesson lesson;
 
         @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
         private List<Question> questions = new ArrayList<>();;

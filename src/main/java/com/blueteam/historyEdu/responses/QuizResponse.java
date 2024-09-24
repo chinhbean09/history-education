@@ -25,8 +25,8 @@ public class QuizResponse {
     @JsonProperty("expiration_time")
     private int expirationTime; // có thể tính toán từ expirationTime (phút) nếu cần
 
-    @JsonProperty("chapter_id")
-    private Long chapterId;
+    @JsonProperty("lesson_id")
+    private Long lessonId;
 
     private List<QuestionDTO> questions; // Sử dụng DTO cho câu hỏi
 
@@ -35,7 +35,7 @@ public class QuizResponse {
         response.setId(quiz.getId());
         response.setTitle(quiz.getTitle());
         response.setExpirationTime(quiz.getExpirationTime());
-        response.setChapterId(quiz.getChapter().getId());
+        response.setLessonId(quiz.getLesson().getId());
 
         List<QuestionDTO> questionResponses = quiz.getQuestions().stream()
                 .map(QuestionDTO::fromQuestion)

@@ -34,7 +34,7 @@ public class Question {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "question_answers", joinColumns = @JoinColumn(name = "question_id"))
     @Column(name = "answer")
-    @JsonManagedReference
+//    @JsonManagedReference
     private List<String> answers;
 
 

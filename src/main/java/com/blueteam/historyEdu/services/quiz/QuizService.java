@@ -1,11 +1,13 @@
 package com.blueteam.historyEdu.services.quiz;
 
+import com.blueteam.historyEdu.dtos.QuestionDTO;
 import com.blueteam.historyEdu.dtos.quiz.QuizAttemptDTO;
 import com.blueteam.historyEdu.dtos.quiz.QuizDTO;
 import com.blueteam.historyEdu.dtos.quiz.QuizResultDTO;
 import com.blueteam.historyEdu.entities.*;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.repositories.IChapterRepository;
+import com.blueteam.historyEdu.repositories.ILessonRepository;
 import com.blueteam.historyEdu.repositories.IQuizAttemptRepository;
 import com.blueteam.historyEdu.repositories.IQuizRepository;
 import com.blueteam.historyEdu.services.question.IQuestionService;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +26,7 @@ import java.util.Optional;
 public class QuizService implements IQuizService  {
     private final IQuizRepository quizRepository;
     private final IChapterRepository chapterRepository;
+    private final ILessonRepository lessonRepository;
     private final IQuizAttemptRepository quizAttemptRepository;
     private final IQuestionService questionService;
 
@@ -37,23 +41,29 @@ public class QuizService implements IQuizService  {
     }
     @Override
     public Quiz createQuiz(QuizDTO quizDTO) {
-        Chapter chapter = chapterRepository.findById(quizDTO.getChapterId())
-                .orElseThrow(() -> new EntityNotFoundException("Chapter not found"));
+        Lesson lesson = lessonRepository.findById(quizDTO.getLessonId())
+                .orElseThrow(() -> new EntityNotFoundException("Lesson not found"));
 
         Quiz quiz = new Quiz();
         quiz.setTitle(quizDTO.getTitle());
-        quiz.setExpirationTime(quizDTO.getExpirationTime()); // Lưu ý đây là thời gian phút
-        quiz.setChapter(chapter);
+        quiz.setExpirationTime(quizDTO.getExpirationTime());
+        quiz.setLesson(lesson);
 
-        // Liên kết câu hỏi với quiz
-        List<Question> questions = quizDTO.getQuestions();
-        for (Question question : questions) {
-            question.setQuiz(quiz); // Thiết lập mối quan hệ hai chiều
+        // Create Questions from DTO
+        List<Question> questions = new ArrayList<>();
+        for (QuestionDTO questionDTO : quizDTO.getQuestions()) {
+            Question question = new Question();
+            question.setText(questionDTO.getText());
+            question.setCorrectAnswer(questionDTO.getCorrectAnswer());
+            question.setAnswers(questionDTO.getAnswers());
+            question.setQuiz(quiz); // Set the quiz reference
+            questions.add(question);
         }
-//        quiz.setQuestions(questions); // Đặt danh sách câu hỏi vào quiz
+        quiz.setQuestions(questions); // Add questions to the quiz
 
-        return quizRepository.save(quiz); // Lưu quiz cùng với các câu hỏi
+        return quizRepository.save(quiz);
     }
+
 
     @Override
     public Quiz updateQuiz(Long id, Quiz quizDetails) throws DataNotFoundException {

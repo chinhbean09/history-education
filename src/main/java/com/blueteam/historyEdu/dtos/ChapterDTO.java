@@ -16,8 +16,8 @@ public class ChapterDTO {
     @JsonProperty("chapterName")
     private String chapterName;
 
-    @JsonProperty("courseId") // Add this to ensure course is associated
-    private Long courseId;
+//    @JsonProperty("courseId") // Add this to ensure course is associated
+//    private Long courseId;
 
     public Chapter toEntity(Course course) {
         return Chapter.builder()

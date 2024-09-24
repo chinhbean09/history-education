@@ -1,12 +1,18 @@
 package com.blueteam.historyEdu.services.course;
 
+import com.blueteam.historyEdu.dtos.ChapterDTO;
 import com.blueteam.historyEdu.dtos.CourseDTO;
+import com.blueteam.historyEdu.dtos.CreateCourseDTO;
+import com.blueteam.historyEdu.entities.Chapter;
 import com.blueteam.historyEdu.entities.Course;
+import com.blueteam.historyEdu.entities.Lesson;
 import com.blueteam.historyEdu.entities.User;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.InvalidParamException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
+import com.blueteam.historyEdu.repositories.IChapterRepository;
 import com.blueteam.historyEdu.repositories.ICourseRepository;
+import com.blueteam.historyEdu.repositories.ILessonRepository;
 import com.blueteam.historyEdu.responses.CourseResponse;
 import com.blueteam.historyEdu.utils.MessageKeys;
 import com.cloudinary.Cloudinary;
@@ -23,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
@@ -31,6 +38,8 @@ import java.util.Objects;
 public class CourseService implements ICourseService {
 
     private final ICourseRepository courseRepository;
+    private final IChapterRepository chapterRepository;
+    private final ILessonRepository lessonRepository;
     private final Cloudinary cloudinary;
 
     @Override
@@ -137,5 +146,41 @@ public class CourseService implements ICourseService {
             }
         }
         return null;
+    }
+
+    @Override
+    @Transactional
+    public CourseResponse createFullCourse(CreateCourseDTO createCourseDTO) throws DataNotFoundException, PermissionDenyException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+
+        if (currentUser.getRole().getRoleName().equals("ADMIN")) {
+            // Tạo mới course
+            Course course = createCourseDTO.toEntity();
+            courseRepository.save(course);
+
+            if (course.getChapters() == null) {
+                course.setChapters(new ArrayList<>());  // Initialize if null
+            }
+
+            // Tạo các chapter nếu có
+            if (createCourseDTO.getChapters() != null) {
+                for (ChapterDTO chapterDTO : createCourseDTO.getChapters()) {
+                    Chapter chapter = chapterDTO.toEntity(course);
+                    chapterRepository.save(chapter);
+                    course.getChapters().add(chapter);
+
+                    Lesson lesson = Lesson.builder()
+                            .chapter(chapter)
+                            .build();
+                    lessonRepository.save(lesson);
+                    chapter.getLessons().add(lesson);
+                }
+            }
+
+            return CourseResponse.fromCourse(course);
+        } else {
+            throw new PermissionDenyException(MessageKeys.PERMISSION_DENIED);
+        }
     }
 }

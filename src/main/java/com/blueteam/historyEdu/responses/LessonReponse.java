@@ -18,6 +18,7 @@ public class LessonReponse {
     private Long lessonId;
     private List<VideoResponse> videos;
     private List<InformationResponse> infos;
+    private List<QuizResponse> quizs;
 
 
     public static LessonReponse fromLesson(Lesson lesson) {
@@ -30,10 +31,15 @@ public class LessonReponse {
                 lesson.getInformations().stream().map(InformationResponse::fromInformation).toList() :
                 new ArrayList<>();
 
+        List<QuizResponse> quizs = (lesson.getQuizzes() != null) ?
+                lesson.getQuizzes().stream().map(QuizResponse::fromQuiz).toList() :
+                new ArrayList<>();
+
         return LessonReponse.builder()
                 .lessonId(lesson.getId())
                 .videos(videos)
                 .infos(infos)
+                .quizs(quizs)
                 .build();
     }
 }
