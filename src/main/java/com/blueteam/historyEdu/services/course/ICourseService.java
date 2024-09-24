@@ -1,6 +1,7 @@
 package com.blueteam.historyEdu.services.course;
 
 import com.blueteam.historyEdu.dtos.CourseDTO;
+import com.blueteam.historyEdu.dtos.CreateCourseDTO;
 import com.blueteam.historyEdu.entities.Course;
 import com.blueteam.historyEdu.entities.Quiz;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
@@ -25,5 +26,7 @@ public interface ICourseService {
     CourseResponse getCourseById(Long courseId) throws DataNotFoundException;
 
     Course uploadCourseImage(Long courseId, MultipartFile image) throws DataNotFoundException;
+
+    CourseResponse createFullCourse(CreateCourseDTO createCourseDTO) throws DataNotFoundException, PermissionDenyException;
 
 }

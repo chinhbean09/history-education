@@ -39,7 +39,7 @@ public class CourseResponse {
     private List<String> requireToPass;
     @JsonProperty("reviews")
     private List<ReviewResponse> reviews;
-    @JsonProperty("videoContent")
+    @JsonProperty("chapters")
     private List<ChapterResponse> chapters;
 
     public static CourseResponse fromCourse(Course course) {

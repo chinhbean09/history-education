@@ -2,6 +2,7 @@ package com.blueteam.historyEdu.controllers;
 
 
 import com.blueteam.historyEdu.dtos.CourseDTO;
+import com.blueteam.historyEdu.dtos.CreateCourseDTO;
 import com.blueteam.historyEdu.entities.Course;
 import com.blueteam.historyEdu.responses.CourseResponse;
 import com.blueteam.historyEdu.responses.ResponseObject;
@@ -153,6 +154,28 @@ public class CourseController {
                             .data(null)
                             .message(e.getMessage())
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .build()
+            );
+        }
+    }
+
+    @PostMapping("/create-full-course")
+    public ResponseEntity<ResponseObject> createFullCourse(@RequestBody CreateCourseDTO createCourseDTO) {
+        try {
+            CourseResponse courseResponse = courseService.createFullCourse(createCourseDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    ResponseObject.builder()
+                            .data(courseResponse)
+                            .message(MessageKeys.COURSE_CREATED_SUCCESSFULLY)
+                            .status(HttpStatus.OK)
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    ResponseObject.builder()
+                            .data(null)
+                            .message(e.getMessage())
+                            .status(HttpStatus.BAD_REQUEST)
                             .build()
             );
         }
