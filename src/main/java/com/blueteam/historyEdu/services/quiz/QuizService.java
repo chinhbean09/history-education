@@ -125,6 +125,7 @@ public QuizResultDTO checkQuiz(QuizAttemptDTO quizAttemptDTO, User user) {
     quizAttempt.setUser(user);
     quizAttempt.setAttemptDate(LocalDateTime.now());
     quizAttempt.setScore(score);
+    quizAttempt.setIsPassed(isPass);
 
     quizAttemptRepository.save(quizAttempt);
 

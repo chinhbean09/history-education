@@ -29,6 +29,9 @@ public class QuizAttempt {
     @Column(name = "score")
     private Integer score;
 
+    @Column(name = "is_passed")
+    private Boolean isPassed;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user; // Assuming you have a User entity

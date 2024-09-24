@@ -37,9 +37,9 @@ public class Chapter {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-//    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-//    @JsonManagedReference
-//    private List<Quiz> quizzes;
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<Quiz> quizzes;
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Lesson> lessons =new ArrayList<>();
