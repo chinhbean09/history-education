@@ -36,13 +36,14 @@ pipeline {
                     def processId = sh(script: "ps -ef | grep ${processName} | grep -v grep | awk '{print \$2}'", returnStdout: true).trim()
                     if (processId) {
                         echo "Killing process ${processId}"
-                        sh(script: "kill -9 ${processId}")
+                        sh(script: "sudo kill -9 ${processId}")
                     } else {
                         echo "No running process found for ${processName}"
                     }
                 }
             }
         }
+
         stage('deploy') {
             steps {
                 script {
