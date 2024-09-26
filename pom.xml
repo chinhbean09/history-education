@@ -8,11 +8,11 @@
 		<version>3.3.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>history-edu</artifactId>
+	<groupId>com.blueteam</groupId>
+	<artifactId>history-education</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>historyEdu</name>
-	<description>Demo project for Spring Boot</description>
+	<name>history-education</name>
+	<description>history-education</description>
 	<url/>
 	<licenses>
 		<license/>
