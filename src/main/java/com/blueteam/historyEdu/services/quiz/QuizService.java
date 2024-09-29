@@ -47,6 +47,7 @@ public class QuizService implements IQuizService  {
         Quiz quiz = new Quiz();
         quiz.setTitle(quizDTO.getTitle());
         quiz.setExpirationTime(quizDTO.getExpirationTime());
+        quiz.setStt(quizDTO.getStt());
         quiz.setLesson(lesson);
 
         // Create Questions from DTO

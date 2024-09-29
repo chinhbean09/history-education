@@ -20,6 +20,9 @@ public class Information {
     @Column(name = "info_title")
     private String infoTitle;
 
+    @Column(name = "stt")
+    private Integer stt;
+
     @ManyToOne
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;

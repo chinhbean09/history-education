@@ -19,6 +19,8 @@ public class QuizDTO {
     @JsonProperty("expiration-time")
     private int expirationTime;
 
+    private int stt;
+
     @JsonProperty("lesson_id")
     private Long lessonId;
 

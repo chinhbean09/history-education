@@ -35,6 +35,9 @@ public class Video {
     @Column(name = "duration")
     private Integer duration;
 
+    @Column(name = "stt")
+    private Integer stt;
+
 //    @Column(name = "create_at")
 //    private LocalDateTime createAt;
 
