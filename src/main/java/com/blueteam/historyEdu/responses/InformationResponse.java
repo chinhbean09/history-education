@@ -13,11 +13,13 @@ public class InformationResponse {
 
     private Long infoId;
     private String infoTitle;
+    private Integer stt;
 
     public static InformationResponse fromInformation(Information information) {
         return InformationResponse.builder()
                 .infoId(information.getId())
                 .infoTitle(information.getInfoTitle())
+                .stt(information.getStt())
                 .build();
     }
 }

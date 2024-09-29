@@ -27,6 +27,9 @@
         @Column(name = "title", nullable = false)
         private String title;
 
+        @Column(name = "stt")
+        private Integer stt;
+
         @Column(name = "expiration-time")
         private int expirationTime;
 

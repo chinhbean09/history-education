@@ -17,6 +17,7 @@ public class VideoResponse {
     private String lessonVideo;
     private Integer duration;
     private String moreInformation;
+    private Integer stt;
     private List<String> supportingMaterials;
 
     public static VideoResponse fromVideo(Video video) {
@@ -25,6 +26,7 @@ public class VideoResponse {
                 .videoName(video.getVideoName())
                 .lessonVideo(video.getLessonVideo())
                 .moreInformation(video.getMoreInformation())
+                .stt(video.getStt())
                 .duration(video.getDuration())
                 .supportingMaterials(video.getSupportingMaterials())
                 .build();

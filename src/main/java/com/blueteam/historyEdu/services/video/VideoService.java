@@ -64,6 +64,7 @@ public class VideoService implements IVideoService {
             video.setDuration(videoDTO.getDuration());
             video.setSupportingMaterials(videoDTO.getSupportingMaterials());
             video.setLessonVideo(videoDTO.getLessonVideo());
+            video.setStt(videoDTO.getStt());
             videoRepository.save(video);
             return CourseResponse.fromCourse(video.getLesson().getChapter().getCourse());
         } else {

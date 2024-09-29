@@ -25,6 +25,8 @@ public class QuizResponse {
     @JsonProperty("expiration_time")
     private int expirationTime; // có thể tính toán từ expirationTime (phút) nếu cần
 
+    private int stt;
+
     @JsonProperty("lesson_id")
     private Long lessonId;
 
@@ -34,6 +36,7 @@ public class QuizResponse {
         QuizResponse response = new QuizResponse();
         response.setId(quiz.getId());
         response.setTitle(quiz.getTitle());
+        response.setStt(quiz.getStt());
         response.setExpirationTime(quiz.getExpirationTime());
         response.setLessonId(quiz.getLesson().getId());
 

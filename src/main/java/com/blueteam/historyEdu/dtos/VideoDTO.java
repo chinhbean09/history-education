@@ -16,6 +16,7 @@ public class VideoDTO {
     private String videoName;
     private String lessonVideo;
     private Integer duration;
+    private Integer stt;
     private String moreInformation;
     private List<String> supportingMaterials;
 
@@ -24,6 +25,7 @@ public class VideoDTO {
                 .videoName(videoName)
                 .lessonVideo(lessonVideo)
                 .moreInformation(moreInformation)
+                .stt(stt)
                 .supportingMaterials(supportingMaterials)
                 .duration(duration)
                 .build();
