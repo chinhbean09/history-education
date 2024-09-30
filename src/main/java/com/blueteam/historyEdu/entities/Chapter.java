@@ -41,7 +41,7 @@ public class Chapter {
 //    @JsonManagedReference
 //    private List<Quiz> quizzes;
 
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Lesson> lessons =new ArrayList<>();
 
 }
