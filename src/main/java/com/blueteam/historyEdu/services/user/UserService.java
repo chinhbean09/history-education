@@ -232,12 +232,26 @@ public class UserService implements IUserService {
     public void updateUser(UserDTO userDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
-        currentUser.setEmail(userDTO.getEmail());
-        currentUser.setFullName(userDTO.getFullName());
-        currentUser.setPhoneNumber(userDTO.getPhoneNumber());
-        currentUser.setAddress(userDTO.getAddress());
-        currentUser.setDateOfBirth(userDTO.getDateOfBirth());
-        currentUser.setGender(userDTO.getGender());
+        if(userDTO.getEmail() != null){
+            currentUser.setEmail(userDTO.getEmail());
+        }
+        if(userDTO.getPhoneNumber() != null) {
+            currentUser.setPhoneNumber(userDTO.getPhoneNumber());
+        }
+        if(userDTO.getFullName() != null ){
+            currentUser.setFullName(userDTO.getFullName());
+
+        }
+        if(userDTO.getAddress() != null){
+            currentUser.setAddress(userDTO.getAddress());
+        }
+        if(userDTO.getDateOfBirth() != null)    {
+            currentUser.setDateOfBirth(userDTO.getDateOfBirth());
+
+        }
+        if(userDTO.getGender() != null) {
+            currentUser.setGender(userDTO.getGender());
+        }
         UserRepository.save(currentUser);
     }
 
