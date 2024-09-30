@@ -45,6 +45,9 @@ public class UserResponse {
     @JsonProperty("avatar")
     private String avatar;
 
+    @JsonProperty("gender")
+    private String gender;
+
     @JsonProperty("role")
     private com.blueteam.historyEdu.entities.Role role;
 
@@ -58,6 +61,7 @@ public class UserResponse {
                 .dateOfBirth(user.getDateOfBirth())
                 .facebookAccountId(user.getFacebookAccountId())
                 .googleAccountId(user.getGoogleAccountId())
+                .gender(user.getGender())
                 .role(user.getRole())
                 .avatar(user.getAvatar())
                 .build();
