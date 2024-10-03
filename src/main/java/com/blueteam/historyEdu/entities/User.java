@@ -43,7 +43,7 @@ public class User extends BaseEntity implements UserDetails, OAuth2User{
 
     @ManyToOne
     @JoinColumn(name = "package_id", columnDefinition = "bigint")
-    private ServicePackage packageId;
+    private ServicePackage servicePackage;
 
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
@@ -94,10 +94,6 @@ public class User extends BaseEntity implements UserDetails, OAuth2User{
     @Column(name = "package_status")
     @Enumerated(EnumType.STRING)
     private PackageStatus status;
-
-    @ManyToOne
-    @JoinColumn(name = "package_id", columnDefinition = "bigint")
-    private ServicePackage servicePackage;
 
     @Override
     public Map<String, Object> getAttributes() {
