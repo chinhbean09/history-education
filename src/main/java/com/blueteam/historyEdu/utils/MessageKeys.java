@@ -75,4 +75,37 @@ public class MessageKeys {
     public static final String INFORMATION_CREATED_SUCCESSFULLY = "information.create_information.information_created_successfully";
     public static final String INFORMATION_UPDATED_SUCCESSFULLY = "information.update_information.information_updated_successfully";
     public static final String INFORMATION_DELETED_SUCCESSFULLY = "information.update_information.information_deleted_successfully";
+    public static final String RETRIEVED_ALL_PACKAGES_SUCCESSFULLY = "package.list_package.retrieved_all_packages_successfully";
+
+    public static final String REGISTER_PACKAGE_SUCCESSFULLY = "package.register_package.register_successfully";
+
+    public static final String PACKAGE_EXPIRED = "package.package_expired";
+
+    public static final String PACKAGE_EXPIRED_SUCCESSFULLY = "package.package_expired_successfully";
+
+    public static final String RETRIEVED_ALL_PACKAGES_FAILED = "package.list_package.retrieved_all_packages_failed";
+
+    public static final String RETRIEVED_PACKAGE_DETAIL_SUCCESSFULLY = "package.package_detail.retrieved_package_detail_successfully";
+
+    public static final String RETRIEVED_PACKAGE_DETAIL_FAILED = "package.package_detail.retrieved_package_detail_failed";
+    public static final String CREATE_PACKAGE_SUCCESSFULLY = "package.create_package.create_successfully";
+
+    public static final String UPDATE_PACKAGE_SUCCESSFULLY = "package.update_package.update_successfully";
+
+    public static final String DELETE_PACKAGE_SUCCESSFULLY = "package.delete_package.delete_successfully";
+
+    public static final String PACKAGE_NOT_FOUND = "package.list_package.package_not_found";
+
+    public static final String USER_DOES_NOT_HAVE_PACKAGE = "package.list_package.user_does_not_have_package";
+
+    public static final String INVALID_PACKAGE_CREATE_REQUEST = "package.package_create.invalid_package_create_request";
+
+    public static final String INVALID_PACKAGE_UPDATE_REQUEST = "package.package_update.invalid_package_update_request";
+
+    public static final String DELETE_PACKAGE_FAILED = "package.delete_package.delete_failed";
+
+    public static final String REGISTER_PACKAGE_FAILED = "package.register_package.register_failed";
+
+
+
 }

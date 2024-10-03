@@ -1,7 +1,10 @@
 package com.blueteam.historyEdu.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "packages")
@@ -27,5 +30,9 @@ public class ServicePackage {
 
     @Column(name = "description")
     private String description;
+
+    @OneToMany(mappedBy = "servicePackage", fetch = FetchType.LAZY)
+    @JsonBackReference("service-package-payment")
+    private List<PaymentTransaction> paymentTransaction;
 
 }

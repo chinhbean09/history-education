@@ -1,5 +1,6 @@
 package com.blueteam.historyEdu.entities;
 
+import com.blueteam.historyEdu.enums.PackageStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -89,6 +90,14 @@ public class User extends BaseEntity implements UserDetails, OAuth2User{
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
+
+    @Column(name = "package_status")
+    @Enumerated(EnumType.STRING)
+    private PackageStatus status;
+
+    @ManyToOne
+    @JoinColumn(name = "package_id", columnDefinition = "bigint")
+    private ServicePackage servicePackage;
 
     @Override
     public Map<String, Object> getAttributes() {
