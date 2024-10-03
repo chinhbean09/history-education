@@ -139,6 +139,7 @@ public class UserController {
                     .fullName(userDetail.getFullName())
                     .email(userDetail.getEmail())
                     .phoneNumber(userDetail.getPhoneNumber())
+                    .avatar(userDetail.getAvatar())
                     .roles(userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                     .id(userDetail.getId());
 
