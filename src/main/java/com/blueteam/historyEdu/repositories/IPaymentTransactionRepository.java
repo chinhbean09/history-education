@@ -1,6 +1,6 @@
 package com.blueteam.historyEdu.repositories;
 
-import com.chinhbean.bookinghotel.entities.PaymentTransaction;
+import com.blueteam.historyEdu.entities.PaymentTransaction;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
