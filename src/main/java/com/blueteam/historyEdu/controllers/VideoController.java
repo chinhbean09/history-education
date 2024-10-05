@@ -20,10 +20,10 @@ public class VideoController {
     private final IVideoService videoService;
 
     // api create video
-    @PostMapping("/create/{chapterId}")
-    public ResponseEntity<ResponseObject> createVideo(@PathVariable Long chapterId, @RequestBody VideoDTO videoDTO) {
+    @PostMapping("/create/{lessonId}")
+    public ResponseEntity<ResponseObject> createVideo(@PathVariable Long lessonId, @RequestBody VideoDTO videoDTO) {
         try {
-            CourseResponse courseResponse = videoService.createVideo(chapterId, videoDTO);
+            CourseResponse courseResponse = videoService.createVideo(lessonId, videoDTO);
             return ResponseEntity.status(HttpStatus.OK).body(
                     ResponseObject.builder()
                             .data(courseResponse)
