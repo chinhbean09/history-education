@@ -14,6 +14,7 @@ import com.blueteam.historyEdu.repositories.IChapterRepository;
 import com.blueteam.historyEdu.repositories.ICourseRepository;
 import com.blueteam.historyEdu.repositories.ILessonRepository;
 import com.blueteam.historyEdu.responses.CourseResponse;
+import com.blueteam.historyEdu.responses.GetAllCourseResponse;
 import com.blueteam.historyEdu.utils.MessageKeys;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -89,14 +90,14 @@ public class CourseService implements ICourseService {
 
     @Override
     @Transactional
-    public Page<CourseResponse> getAllCourse(int page, int size) throws DataNotFoundException {
+    public Page<GetAllCourseResponse> getAllCourse(int page, int size) throws DataNotFoundException {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Course> courses = courseRepository.findAll(pageable);
         if (courses.isEmpty()) {
             throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
         }
-        return courses.map(CourseResponse::fromCourse);
+        return courses.map(GetAllCourseResponse::fromCourse);
 
     }
 

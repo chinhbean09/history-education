@@ -5,6 +5,7 @@ import com.blueteam.historyEdu.dtos.CourseDTO;
 import com.blueteam.historyEdu.dtos.CreateCourseDTO;
 import com.blueteam.historyEdu.entities.Course;
 import com.blueteam.historyEdu.responses.CourseResponse;
+import com.blueteam.historyEdu.responses.GetAllCourseResponse;
 import com.blueteam.historyEdu.responses.ResponseObject;
 import com.blueteam.historyEdu.services.course.ICourseService;
 import com.blueteam.historyEdu.utils.MessageKeys;
@@ -70,9 +71,9 @@ public class CourseController {
 
     // api get all course
     @GetMapping("/get-all")
-    public ResponseEntity<ResponseObject> getAllCourse() {
+    public ResponseEntity<ResponseObject> getAllCourse(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         try {
-            Page<CourseResponse> courseResponses = courseService.getAllCourse(0, 10);
+            Page<GetAllCourseResponse> courseResponses = courseService.getAllCourse(page, size);
             return ResponseEntity.status(HttpStatus.OK).body(
                     ResponseObject.builder()
                             .data(courseResponses)
