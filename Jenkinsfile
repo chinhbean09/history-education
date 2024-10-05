@@ -1,10 +1,6 @@
 pipeline {
     agent any
     environment {
-        SPRING_DATASOURCE_URL = credentials('datasource-url')      
-        SPRING_DATASOURCE_USERNAME = credentials('datasource-user')
-        SPRING_DATASOURCE_PASSWORD = credentials('datasource-pass') 
-
         appUser = credentials('historyeducation-user')          
         appDeploy = credentials('historyeducation-deploy')          
         appVersion = credentials('historyeducation-version')        
