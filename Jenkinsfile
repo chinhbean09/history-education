@@ -13,7 +13,10 @@ pipeline {
         killScript = "kill -9 \$(ps -ef| grep ${processName}| grep -v grep| awk '{print \$2}')" 
         pro_properties = "-Dspring.profiles.active=pro"         
         permsScript = "sudo chown -R ${appUser}. ${folderDeploy}" 
-        runScript = """sudo su ${appUser} -c "cd ${folderDeploy}; java -jar ${pro_properties} ${processName} > nohup.out 2>&1 &" """ 
+        runScript = """sudo su ${appUser} -c "cd ${folderDeploy}; java -jar ${pro_properties} ${processName} > nohup.out 2>&1 &" """
+        PAYOS_CLIENT_ID = credentials('payos-client-id')
+        PAYOS_API_KEY = credentials('payos-api-key')
+        PAYOS_CHECKSUM_KEY = credentials('payos-checksum-key')
     }
     stages {
         stage('info') {
