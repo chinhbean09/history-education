@@ -20,8 +20,8 @@ public class GetAllCourseResponse {
     private Long price;
     @JsonProperty("totalDuration")
     private Long totalDuration;
-    @JsonProperty("totalVideos")
-    private Long totalVideos;
+    @JsonProperty("totalLessons")
+    private Long totalLessons;
 
     public static GetAllCourseResponse fromCourse(Course course) {
         return GetAllCourseResponse.builder()
@@ -30,7 +30,7 @@ public class GetAllCourseResponse {
                 .image(course.getImage())
                 .price(course.getPrice())
                 .totalDuration(course.getTotalDuration())
-                .totalVideos(course.getTotalVideos())
+                .totalLessons(course.getTotalLessons())
                 .build();
     }
 }

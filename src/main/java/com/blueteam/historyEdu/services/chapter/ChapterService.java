@@ -38,21 +38,37 @@ public class ChapterService implements IChapterService {
             // Fetch the course
             Course course = courseRepository.findById(courseId)
                     .orElseThrow(() -> new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND));
+
             // Create chapter and link it to the course
             Chapter chapter = chapterDTO.toEntity(course);
             chapter.setCourse(course); // Set the course reference in the chapter
+
             // Save the new chapter
             chapterRepository.save(chapter);
+
             // Add the chapter to the course's chapter list
             course.getChapters().add(chapter);
 
+            // Increment totalChapter by 1
+            course.setTotalChapter(course.getTotalChapter() + 1);
+
+            // Create a new lesson linked to this chapter
             Lesson lesson = Lesson.builder()
                     .chapter(chapter)
                     .build();
             lessonRepository.save(lesson);
+
+            // Add the lesson to the chapter's lesson list
             chapter.getLessons().add(lesson);
 
-            return CourseResponse.fromCourse(course); // Return updated course response
+            // Increment totalLessons by 1
+            course.setTotalLessons(course.getTotalLessons() + 1);
+
+            // Save the updated course with new totalChapter and totalLessons
+            courseRepository.save(course);
+
+            // Return the updated course response
+            return CourseResponse.fromCourse(course);
         } else {
             throw new PermissionDenyException(MessageKeys.PERMISSION_DENIED);
         }
