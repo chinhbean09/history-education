@@ -22,7 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/quizzes")
+@RequestMapping("/api/v1/quizzes")
 @RequiredArgsConstructor
 public class QuizController {
 

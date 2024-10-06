@@ -19,7 +19,7 @@ public class CreateCourseDTO {
     private String introductionVideoUrl;
     private Long totalDuration;
     private Long totalChapter;
-    private Long totalVideos;
+    private Long totalLessons;
     private Long price;
     private Long rating;
     private List<String> whatYouWillLearn;
@@ -35,7 +35,7 @@ public class CreateCourseDTO {
                 .introductionVideoUrl(introductionVideoUrl)
                 .totalDuration(totalDuration)
                 .totalChapter(totalChapter)
-                .totalVideos(totalVideos)
+                .totalLessons(totalLessons)
                 .price(price)
                 .rating(rating)
                 .whatsLearned(whatYouWillLearn)

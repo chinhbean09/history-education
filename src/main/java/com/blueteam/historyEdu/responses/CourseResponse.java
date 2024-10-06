@@ -27,8 +27,8 @@ public class CourseResponse {
     private Long totalDuration;
     @JsonProperty("totalChapter")
     private Long totalChapter;
-    @JsonProperty("totalVideos")
-    private Long totalVideos;
+    @JsonProperty("totalLessons")
+    private Long totalLessons;
     @JsonProperty("price")
     private Long price;
     @JsonProperty("rating")
@@ -62,7 +62,7 @@ public class CourseResponse {
                 .chapters(chapters)
                 .totalDuration(course.getTotalDuration())
                 .totalChapter(course.getTotalChapter())
-                .totalVideos(course.getTotalVideos())
+                .totalLessons(course.getTotalLessons())
                 .price(course.getPrice())
                 .rating(course.getRating())
                 .whatsLearned(course.getWhatsLearned())

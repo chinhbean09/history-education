@@ -1,13 +1,11 @@
 package com.blueteam.historyEdu.services.video;
 
 import com.blueteam.historyEdu.dtos.VideoDTO;
-import com.blueteam.historyEdu.entities.Chapter;
-import com.blueteam.historyEdu.entities.Lesson;
-import com.blueteam.historyEdu.entities.User;
-import com.blueteam.historyEdu.entities.Video;
+import com.blueteam.historyEdu.entities.*;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
 import com.blueteam.historyEdu.repositories.IChapterRepository;
+import com.blueteam.historyEdu.repositories.ICourseRepository;
 import com.blueteam.historyEdu.repositories.ILessonRepository;
 import com.blueteam.historyEdu.repositories.IVideoRepository;
 import com.blueteam.historyEdu.responses.CourseResponse;
@@ -27,27 +25,49 @@ public class VideoService implements IVideoService {
     private final IVideoRepository videoRepository;
     private final IChapterRepository chapterRepository;
     private final ILessonRepository lessonRepository;
+    private final ICourseRepository courseRepository;
 
     @Override
     @Transactional
     public CourseResponse createVideo(Long lessonId, VideoDTO videoDTO) throws DataNotFoundException, PermissionDenyException {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
 
         if (currentUser.getRole().getRoleName().equals("ADMIN")) {
+            // Fetch the lesson
             Lesson lesson = lessonRepository.findById(lessonId)
                     .orElseThrow(() -> new DataNotFoundException(MessageKeys.LESSON_NOT_FOUND));
 
+            // Create the new video entity
             Video video = videoDTO.toEntity();
             video.setLesson(lesson);
             videoRepository.save(video);
             lesson.getVideos().add(video);
-            return CourseResponse.fromCourse(lesson.getChapter().getCourse());
+
+            // Fetch the course associated with the lesson
+            Course course = lesson.getChapter().getCourse();
+
+            // Calculate the total duration of all videos in the course
+            long totalDuration = 0L;
+            for (Chapter chapter : course.getChapters()) {
+                for (Lesson lessonInCourse : chapter.getLessons()) {
+                    for (Video videoInLesson : lessonInCourse.getVideos()) {
+                        totalDuration += videoInLesson.getDuration();
+                    }
+                }
+            }
+
+            // Update the course's totalDuration
+            course.setTotalDuration(totalDuration);
+            courseRepository.save(course);
+
+            // Return the updated course response
+            return CourseResponse.fromCourse(course);
         } else {
             throw new PermissionDenyException(MessageKeys.PERMISSION_DENIED);
         }
     }
+
 
     @Override
     @Transactional

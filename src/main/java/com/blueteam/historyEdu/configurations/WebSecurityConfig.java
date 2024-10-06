@@ -64,8 +64,9 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                                 String.format("%s/payments/**", apiPrefix),
                                 String.format("%s/checkouts/**", apiPrefix),
                                 String.format("%s/orders/**", apiPrefix),
-
-                                String.format("/confirm-webhook", apiPrefix)
+                                String.format("/confirm-webhook", apiPrefix),
+                                String.format("%s/courses/get-all-free-course", apiPrefix),
+                                String.format("%s/courses/get-all-paid-course", apiPrefix)
 
                         )
                         .permitAll()

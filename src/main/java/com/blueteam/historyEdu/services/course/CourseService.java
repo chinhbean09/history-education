@@ -31,8 +31,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,7 +78,7 @@ public class CourseService implements ICourseService {
             course.setIntroductionVideoUrl(courseDTO.getIntroductionVideoUrl());
             course.setTotalDuration(courseDTO.getTotalDuration());
             course.setTotalChapter(courseDTO.getTotalChapter());
-            course.setTotalVideos(courseDTO.getTotalVideos());
+            course.setTotalLessons(courseDTO.getTotalLessons());
             course.setPrice(courseDTO.getPrice());
             course.setRating(courseDTO.getRating());
             course.setWhatsLearned(courseDTO.getWhatYouWillLearn());
@@ -99,6 +101,35 @@ public class CourseService implements ICourseService {
         }
         return courses.map(GetAllCourseResponse::fromCourse);
 
+    }
+
+    @Override
+    public Page<CourseResponse> getAllCourseAdmin(int page, int size) throws DataNotFoundException {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Course> courses = courseRepository.findAll(pageable);
+        if (courses.isEmpty()) {
+            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
+        }
+        return courses.map(CourseResponse::fromCourse);
+    }
+
+    @Override
+    public List<GetAllCourseResponse> getAllCourseWithPriceGreaterThanZero() throws DataNotFoundException {
+        List<Course> courses = courseRepository.findAllByPriceGreaterThan(0);
+        if (courses.isEmpty()) {
+            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
+        }
+        return courses.stream().map(GetAllCourseResponse::fromCourse).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GetAllCourseResponse> getAllCourseWithPriceEqualToZero() throws DataNotFoundException {
+        List<Course> courses = courseRepository.findAllByPriceEquals(0);
+        if (courses.isEmpty()) {
+            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
+        }
+        return courses.stream().map(GetAllCourseResponse::fromCourse).collect(Collectors.toList());
     }
 
     @Override
@@ -158,6 +189,11 @@ public class CourseService implements ICourseService {
         if (currentUser.getRole().getRoleName().equals("ADMIN")) {
             // Tạo mới course
             Course course = createCourseDTO.toEntity();
+
+            // Initialize totalChapter and totalLessons to 0
+            course.setTotalChapter(0L);
+            course.setTotalLessons(0L);
+
             courseRepository.save(course);
 
             if (course.getChapters() == null) {
@@ -171,17 +207,32 @@ public class CourseService implements ICourseService {
                     chapterRepository.save(chapter);
                     course.getChapters().add(chapter);
 
+                    // Increment totalChapter by 1
+                    course.setTotalChapter(course.getTotalChapter() + 1);
+
+                    // Tạo các lessons cho mỗi chapter
+                    if (chapter.getLessons() == null) {
+                        chapter.setLessons(new ArrayList<>());
+                    }
+
+                    // Add lessons (You can modify this part to create real lessons as needed)
                     Lesson lesson = Lesson.builder()
                             .chapter(chapter)
                             .build();
                     lessonRepository.save(lesson);
                     chapter.getLessons().add(lesson);
+
+                    // Increment totalLessons by 1 for each lesson
+                    course.setTotalLessons(course.getTotalLessons() + 1);
                 }
             }
+
+            courseRepository.save(course); // Update course with new totalChapter and totalLessons
 
             return CourseResponse.fromCourse(course);
         } else {
             throw new PermissionDenyException(MessageKeys.PERMISSION_DENIED);
         }
     }
+
 }
