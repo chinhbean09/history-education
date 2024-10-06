@@ -31,8 +31,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -99,6 +101,35 @@ public class CourseService implements ICourseService {
         }
         return courses.map(GetAllCourseResponse::fromCourse);
 
+    }
+
+    @Override
+    public Page<CourseResponse> getAllCourseAdmin(int page, int size) throws DataNotFoundException {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Course> courses = courseRepository.findAll(pageable);
+        if (courses.isEmpty()) {
+            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
+        }
+        return courses.map(CourseResponse::fromCourse);
+    }
+
+    @Override
+    public List<GetAllCourseResponse> getAllCourseWithPriceGreaterThanZero() throws DataNotFoundException {
+        List<Course> courses = courseRepository.findAllByPriceGreaterThan(0);
+        if (courses.isEmpty()) {
+            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
+        }
+        return courses.stream().map(GetAllCourseResponse::fromCourse).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GetAllCourseResponse> getAllCourseWithPriceEqualToZero() throws DataNotFoundException {
+        List<Course> courses = courseRepository.findAllByPriceEquals(0);
+        if (courses.isEmpty()) {
+            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
+        }
+        return courses.stream().map(GetAllCourseResponse::fromCourse).collect(Collectors.toList());
     }
 
     @Override

@@ -22,6 +22,12 @@ public interface ICourseService {
 
     Page<GetAllCourseResponse> getAllCourse(int page, int size) throws DataNotFoundException;
 
+    Page<CourseResponse> getAllCourseAdmin(int page, int size) throws DataNotFoundException;
+
+    List<GetAllCourseResponse> getAllCourseWithPriceGreaterThanZero() throws DataNotFoundException;
+
+    List<GetAllCourseResponse> getAllCourseWithPriceEqualToZero() throws DataNotFoundException;
+
     void deleteCourse(Long courseId) throws DataNotFoundException;
 
     CourseResponse getCourseById(Long courseId) throws DataNotFoundException;
