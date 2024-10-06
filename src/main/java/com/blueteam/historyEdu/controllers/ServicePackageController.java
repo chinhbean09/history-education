@@ -160,7 +160,7 @@ public class ServicePackageController {
     }
 
     @PostMapping("/register-package/{packageId}")
-    @PreAuthorize("hasAnyAuthority('ROLE_PARTNER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
     public ResponseEntity<ResponseObject> registerPackage(@PathVariable Long packageId) {
         try {
             ServicePackage servicePackage = packageService.registerPackage(packageId);

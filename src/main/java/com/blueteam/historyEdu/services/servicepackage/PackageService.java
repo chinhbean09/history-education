@@ -102,54 +102,22 @@ public class PackageService implements IPackageService {
     @Override
 
     public ServicePackage registerPackage(Long packageId) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        User currentUser = (User) authentication.getPrincipal();
-        Long userId = 1L;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
 
-        //check user and get user
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        //check package and get package
         ServicePackage servicePackage = IServicePackageRepository.findById(packageId)
                 .orElseThrow(() -> new IllegalArgumentException("Package not found"));
 
-        //check date > now
         LocalDate now = LocalDate.now();
 
-        //case 30
-
         if (servicePackage.getDuration() == 30) {
-            user.setServicePackage(servicePackage);
-            user.setPackageStartDate(now);
-            user.setPackageEndDate(now.plusDays(30));
-            user.setStatus(PackageStatus.PENDING);
-            userRepository.save(user);
-        } else {
-            //case other (365)
-            user.setServicePackage(servicePackage);
-            user.setPackageStartDate(now);
-            user.setPackageEndDate(now.plusDays(365));
-            user.setStatus(PackageStatus.PENDING);
-            userRepository.save(user);
+            currentUser.setServicePackage(servicePackage);
+            currentUser.setPackageStartDate(now);
+            currentUser.setPackageEndDate(now.plusDays(30));
+            currentUser.setStatus(PackageStatus.PENDING);
+            userRepository.save(currentUser);
         }
-
-        scheduler.schedule(() -> updatePackageIfPending(userId), 300, TimeUnit.SECONDS);
-
         return servicePackage;
-    }
-
-    @Async
-    public CompletableFuture<Void> updatePackageIfPending(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user != null && PackageStatus.PENDING.equals(user.getStatus())) {
-            user.setServicePackage(null);
-            user.setPackageStartDate(null);
-            user.setPackageEndDate(null);
-            user.setStatus(PackageStatus.INACTIVE);
-            userRepository.save(user);
-        }
-        return CompletableFuture.completedFuture(null);
     }
 
     @Transactional
@@ -176,40 +144,6 @@ public class PackageService implements IPackageService {
     @Override
     public void sendMailNotificationForPackagePayment(ServicePackage servicePackage, String email) {
     }
-
-//    @Override
-//    public void sendMailNotificationForPackagePayment(ServicePackage servicePackage, String email) {
-//        try {
-//            DataMailDTO dataMail = new DataMailDTO();
-//
-//            Optional<PaymentTransaction> paymentTransactionOpt = IPaymentTransactionRepository.findByEmailGuest(email);
-//            if (paymentTransactionOpt.isPresent()) {
-//                PaymentTransaction paymentTransaction = paymentTransactionOpt.get();
-//                logger.info("here dataMail.setTo");
-//                dataMail.setTo(paymentTransaction.getEmailGuest());
-//                logger.info("here dataMail.setSubject");
-//                dataMail.setSubject(MailTemplate.SEND_MAIL_SUBJECT.PACKAGE_PAYMENT_SUCCESS);
-//
-//                NumberFormat currencyFormatter = NumberFormat.getInstance(new Locale("vi", "VN"));
-//                Map<String, Object> props = new HashMap<>();
-//                props.put("fullName", paymentTransaction.getNameGuest());
-//                props.put("packageId", servicePackage.getId());
-//                props.put("packageName", servicePackage.getName());
-//                props.put("packagePrice", currencyFormatter.format(servicePackage.getPrice()));
-//                props.put("packageDuration", servicePackage.getDuration());
-//                props.put("description", servicePackage.getDescription());
-//                dataMail.setProps(props);
-//                logger.info("here mailService.sendHtmlMail");
-//                mailService.sendHtmlMail(dataMail, MailTemplate.SEND_MAIL_TEMPLATE.PACKAGE_PAYMENT_SUCCESS_TEMPLATE);
-//                logger.info("Email successfully sent to " + paymentTransaction.getEmailGuest());
-//            } else {
-//                logger.info("No payment transaction found for email: " + email);
-//            }
-//        } catch (Exception exp) {
-//            exp.printStackTrace();
-//        }
-//    }
-
 
     @Override
     public ServicePackage findPackageWithPaymentTransactionById(Long packageId) {

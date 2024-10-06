@@ -60,7 +60,12 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                                 String.format("%s/users/oauth2/google", apiPrefix),
                                 String.format("%s/forgot-password/**", apiPrefix),
                                 String.format("%s/courses/get-all", apiPrefix),
-                                String.format("%s/courses/getDetail/**", apiPrefix)
+                                String.format("%s/courses/getDetail/**", apiPrefix),
+                                String.format("%s/payments/**", apiPrefix),
+                                String.format("%s/checkouts/**", apiPrefix),
+                                String.format("%s/orders/**", apiPrefix),
+
+                                String.format("/confirm-webhook", apiPrefix)
 
                         )
                         .permitAll()
