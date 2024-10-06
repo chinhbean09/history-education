@@ -78,7 +78,7 @@ public class CourseService implements ICourseService {
             course.setIntroductionVideoUrl(courseDTO.getIntroductionVideoUrl());
             course.setTotalDuration(courseDTO.getTotalDuration());
             course.setTotalChapter(courseDTO.getTotalChapter());
-            course.setTotalVideos(courseDTO.getTotalVideos());
+            course.setTotalLessons(courseDTO.getTotalLessons());
             course.setPrice(courseDTO.getPrice());
             course.setRating(courseDTO.getRating());
             course.setWhatsLearned(courseDTO.getWhatYouWillLearn());
@@ -189,6 +189,11 @@ public class CourseService implements ICourseService {
         if (currentUser.getRole().getRoleName().equals("ADMIN")) {
             // Tạo mới course
             Course course = createCourseDTO.toEntity();
+
+            // Initialize totalChapter and totalLessons to 0
+            course.setTotalChapter(0L);
+            course.setTotalLessons(0L);
+
             courseRepository.save(course);
 
             if (course.getChapters() == null) {
@@ -202,17 +207,32 @@ public class CourseService implements ICourseService {
                     chapterRepository.save(chapter);
                     course.getChapters().add(chapter);
 
+                    // Increment totalChapter by 1
+                    course.setTotalChapter(course.getTotalChapter() + 1);
+
+                    // Tạo các lessons cho mỗi chapter
+                    if (chapter.getLessons() == null) {
+                        chapter.setLessons(new ArrayList<>());
+                    }
+
+                    // Add lessons (You can modify this part to create real lessons as needed)
                     Lesson lesson = Lesson.builder()
                             .chapter(chapter)
                             .build();
                     lessonRepository.save(lesson);
                     chapter.getLessons().add(lesson);
+
+                    // Increment totalLessons by 1 for each lesson
+                    course.setTotalLessons(course.getTotalLessons() + 1);
                 }
             }
+
+            courseRepository.save(course); // Update course with new totalChapter and totalLessons
 
             return CourseResponse.fromCourse(course);
         } else {
             throw new PermissionDenyException(MessageKeys.PERMISSION_DENIED);
         }
     }
+
 }

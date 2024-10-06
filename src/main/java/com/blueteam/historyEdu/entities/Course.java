@@ -37,14 +37,14 @@ public class Course {
     @Column(name = "image", nullable = true)
     private String image;
 
-    @Column(name = "total_duration", nullable = false)
+    @Column(name = "total_duration", nullable = true)
     private Long totalDuration;
 
-    @Column(name = "total_chapter", nullable = false)
+    @Column(name = "total_chapter", nullable = true)
     private Long totalChapter;
 
-    @Column(name = "total_videos", nullable = false)
-    private Long totalVideos;
+    @Column(name = "total_lessons", nullable = true)
+    private Long totalLessons;
 
     @Column(name = "price", nullable = false)
     private Long price;
