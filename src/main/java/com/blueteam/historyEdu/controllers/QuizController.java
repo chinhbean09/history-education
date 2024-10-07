@@ -7,6 +7,7 @@ import com.blueteam.historyEdu.entities.Quiz;
 import com.blueteam.historyEdu.entities.User;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.responses.QuizResponse;
+import com.blueteam.historyEdu.services.lesson.ILessonService;
 import com.blueteam.historyEdu.services.quiz.IQuizService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class QuizController {
 
     private final IQuizService quizService;
+    private final ILessonService lessonService;
 
     @GetMapping("/get-all-quizzes")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
@@ -69,11 +71,11 @@ public class QuizController {
         Quiz updatedQuiz = quizService.updateQuiz(id, quizDetails);
         return ResponseEntity.ok(updatedQuiz);
     }
-    @DeleteMapping("/delete-quiz/{id}")
+    @DeleteMapping("/delete-quiz/{lessonId}/{quizId}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @Transactional
-    public ResponseEntity<Void> deleteQuiz(@PathVariable Long id) throws DataNotFoundException {
-        quizService.deleteQuiz(id);
+    public ResponseEntity<Void> deleteQuiz(@PathVariable Long lessonId, @PathVariable Long quizId) throws DataNotFoundException {
+        lessonService.deleteQuizAndUpdateStt(lessonId, quizId);
         return ResponseEntity.noContent().build();
     }
 

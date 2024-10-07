@@ -4,6 +4,7 @@ package com.blueteam.historyEdu.controllers;
 import com.blueteam.historyEdu.dtos.VideoDTO;
 import com.blueteam.historyEdu.responses.CourseResponse;
 import com.blueteam.historyEdu.responses.ResponseObject;
+import com.blueteam.historyEdu.services.lesson.ILessonService;
 import com.blueteam.historyEdu.services.video.IVideoService;
 import com.blueteam.historyEdu.utils.MessageKeys;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class VideoController {
 
     private final IVideoService videoService;
+    private final ILessonService lessonService;
 
     // api create video
     @PostMapping("/create/{lessonId}")
@@ -66,10 +68,10 @@ public class VideoController {
     }
 
     // api delete video
-    @DeleteMapping("/delete/{videoId}")
-    public ResponseEntity<ResponseObject> deleteVideo(@PathVariable Long videoId) {
+    @DeleteMapping("/delete/{lessonId}/{videoId}")
+    public ResponseEntity<ResponseObject> deleteVideo(@PathVariable Long lessonId, @PathVariable Long videoId) {
         try {
-            videoService.deleteVideo(videoId);
+            lessonService.deleteVideoAndUpdateStt(lessonId, videoId);
             return ResponseEntity.status(HttpStatus.OK).body(
                     ResponseObject.builder()
                             .data(null)

@@ -6,12 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface IQuizRepository extends JpaRepository<Quiz, Long> {
     @Query("SELECT q FROM Quiz q JOIN FETCH q.questions qu JOIN FETCH qu.answers WHERE q.id = :id")
     Optional<Quiz> findQuizByIdWithQuestionsAndAnswers(@Param("id") Long id);
+
+    List<Quiz> findAllByLessonIdOrderBySttAsc(Long lessonId);
 
 
 }

@@ -1,5 +1,6 @@
 package com.blueteam.historyEdu.entities;
 
+import com.blueteam.historyEdu.entities.common.ItemWithStt;
 import com.blueteam.historyEdu.entities.convert.StringListConverter;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Video {
+public class Video implements ItemWithStt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,5 +55,15 @@ public class Video {
     @ManyToOne
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
+
+    @Override
+    public void setStt(int stt) {
+        this.stt = stt;
+    }
+
+    @Override
+    public int getStt() {
+        return stt;
+    }
 }
 

@@ -1,5 +1,6 @@
     package com.blueteam.historyEdu.entities;
 
+    import com.blueteam.historyEdu.entities.common.ItemWithStt;
     import com.fasterxml.jackson.annotation.JsonBackReference;
     import com.fasterxml.jackson.annotation.JsonIgnore;
     import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -18,7 +19,7 @@
     @AllArgsConstructor
     @Builder
 //    @ToString(exclude = {"chapter"})  // Exclude relationships to prevent recursion
-    public class Quiz {
+    public class Quiz implements ItemWithStt {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,5 +44,15 @@
 
         @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
         private List<Question> questions = new ArrayList<>();;
+
+        @Override
+        public void setStt(int stt) {
+            this.stt = stt;
+        }
+
+        @Override
+        public int getStt() {
+            return stt;
+        }
 
     }
