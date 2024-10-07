@@ -26,13 +26,11 @@ public class ServicePackage {
     private Double price;
 
     @Column(name = "duration")
-    private Integer duration;
+    private Integer duration; // duration in days
 
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "servicePackage", fetch = FetchType.LAZY)
-    @JsonBackReference("service-package-payment")
-    private List<PaymentTransaction> paymentTransaction;
-
+    @OneToMany(mappedBy = "servicePackage")
+    private List<Purchase> purchases;
 }

@@ -63,7 +63,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                                 String.format("%s/courses/getDetail/**", apiPrefix),
                                 String.format("%s/payments/**", apiPrefix),
                                 String.format("%s/checkouts/**", apiPrefix),
-                                String.format("%s/orders/**", apiPrefix),
+                                String.format("%s/orders/cancel", apiPrefix),
+                                String.format("%s/orders/success", apiPrefix),
 
                                 String.format("/confirm-webhook", apiPrefix)
 
@@ -92,12 +93,12 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 //                            User user = (User) authentication.getPrincipal();
 //                            String token = jwtTokenUtils.generateToken(user);
 //                            response.setContentType("application/json");
-//                            response.setStatus(HttpServletResponse.SC_OK);
+//                            response.setPackageStatus(HttpServletResponse.SC_OK);
 //                            response.getWriter().write("{\"token\":\"" + token + "\"}");
 //                        })
 //                        .failureHandler((request, response, exception) -> {
 //                            response.setContentType("application/json");
-//                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                            response.setPackageStatus(HttpServletResponse.SC_UNAUTHORIZED);
 //                            response.getWriter().write("{\"error\":\"" + exception.getMessage() + "\"}");
 //                        })
 //                );

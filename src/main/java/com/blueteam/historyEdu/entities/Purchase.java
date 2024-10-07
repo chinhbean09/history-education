@@ -1,8 +1,8 @@
 package com.blueteam.historyEdu.entities;
 
+import com.blueteam.historyEdu.enums.PackageStatus;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,25 +18,27 @@ public class Purchase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "order_code", nullable = false)
+    private Long orderCode;
+
     @ManyToOne
-    @JoinColumn(name = "package_id")
+    @JoinColumn(name = "package_id", nullable = false)
     private ServicePackage servicePackage;
 
-    @Column(name = "purchase_date")
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(name = "purchase_date", nullable = false)
     private LocalDateTime purchaseDate;
 
-    @Column(name = "expiry_date")
+    @Column(name = "expiry_date", nullable = false)
     private LocalDateTime expiryDate;
 
     @Column(nullable = false)
-    private String phoneGuest;
-
-    @Column(nullable = false)
-    private String nameGuest;
-
-    @Column(nullable = false)
-    private String emailGuest;
-
-    @Column(nullable = false)
     private LocalDateTime createDate;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private PackageStatus packageStatus;
 }
