@@ -1,5 +1,6 @@
 package com.blueteam.historyEdu.responses.User;
 
+import com.blueteam.historyEdu.enums.PackageStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -37,19 +38,7 @@ public class LoginResponse {
 
     private String email;
 
-    //package detail
-    @JsonProperty("package_id")
-    private Long packageId;
+    @Enumerated(EnumType.STRING)
+    private PackageStatus packageStatus;
 
-    //package detail
-//    @Enumerated(EnumType.STRING)
-//    private PackageStatus status;
-
-    //package detail
-    @JsonProperty("package_start_date")
-    private LocalDate packageStartDate;
-
-    //package detail
-    @JsonProperty("package_end_date")
-    private LocalDate packageEndDate;
 }

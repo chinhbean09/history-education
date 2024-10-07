@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import java.time.LocalDate;
+
 import java.util.*;
 
 @Entity
@@ -17,7 +17,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User extends BaseEntity implements UserDetails, OAuth2User{
+public class User extends BaseEntity implements UserDetails, OAuth2User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,10 +41,6 @@ public class User extends BaseEntity implements UserDetails, OAuth2User{
     @Column(name = "is_active")
     private boolean active;
 
-    @ManyToOne
-    @JoinColumn(name = "package_id", columnDefinition = "bigint")
-    private ServicePackage servicePackage;
-
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
 
@@ -63,12 +59,6 @@ public class User extends BaseEntity implements UserDetails, OAuth2User{
     @JoinColumn(name = "quiz_attempt_id", columnDefinition = "bigint")
     private QuizAttempt quizAttempt;
 
-    @Column(name = "package_start_date")
-    private LocalDate packageStartDate;
-
-    @Column(name = "package_end_date")
-    private LocalDate packageEndDate;
-
     @Column(name = "modified_by")
     private String modifiedBy;
 
@@ -82,6 +72,9 @@ public class User extends BaseEntity implements UserDetails, OAuth2User{
     private String avatar;
 
     @OneToMany(mappedBy = "user")
+    private List<Purchase> purchases;
+
+    @OneToMany(mappedBy = "user")
     private List<VideoProgress> videoProgressList;
 
     @OneToMany(mappedBy = "user")
@@ -93,7 +86,7 @@ public class User extends BaseEntity implements UserDetails, OAuth2User{
 
     @Column(name = "package_status")
     @Enumerated(EnumType.STRING)
-    private PackageStatus status;
+    private PackageStatus packageStatus;
 
     @Override
     public Map<String, Object> getAttributes() {
