@@ -5,6 +5,7 @@ import com.blueteam.historyEdu.dtos.InformationDTO;
 import com.blueteam.historyEdu.responses.CourseResponse;
 import com.blueteam.historyEdu.responses.ResponseObject;
 import com.blueteam.historyEdu.services.information.IInformationService;
+import com.blueteam.historyEdu.services.lesson.ILessonService;
 import com.blueteam.historyEdu.utils.MessageKeys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class InformationController {
 
     private final IInformationService informationService;
+    private final ILessonService lessonService;
 
     // api create information
     @PostMapping("/create/{lessonId}")
@@ -65,10 +67,10 @@ public class InformationController {
     }
 
     // api delete information
-    @DeleteMapping("/delete/{informationId}")
-    public ResponseEntity<ResponseObject> deleteInformation(@PathVariable Long informationId) {
+    @DeleteMapping("/delete/{lessonId}/{informationId}")
+    public ResponseEntity<ResponseObject> deleteInformation(@PathVariable Long lessonId, @PathVariable Long informationId) {
         try {
-            informationService.deleteInformation(informationId);
+            lessonService.deleteInfoAndUpdateStt(lessonId, informationId);
             return ResponseEntity.status(HttpStatus.OK).body(
                     ResponseObject.builder()
                             .data(null)
