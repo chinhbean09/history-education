@@ -11,11 +11,13 @@ import lombok.*;
 @Setter
 public class InformationDTO {
     private String infoTitle;
+    private String content;
     private Integer stt;
 
     public Information toEntity() {
         return Information.builder()
                 .infoTitle(infoTitle)
+                .content(content)
                 .stt(stt)
                 .build();
     }
