@@ -38,7 +38,7 @@ public class OrderController {
     private final IServicePackageRepository servicePackageRepository;
     private final IPurchaseRepository purchaseRepository;
 
-    @PostMapping(value = "/success")
+    @GetMapping(value = "/success")
     public RedirectView success(@RequestParam Map<String, String> params) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
@@ -97,7 +97,7 @@ public class OrderController {
         }
     }
 
-    @PostMapping(value = "/cancel")
+    @GetMapping(value = "/cancel")
     public RedirectView cancel(@RequestParam Map<String, String> params) throws Exception {
         long packageId = Long.parseLong(params.get("packageId"));
         long userId = Long.parseLong(params.get("userId"));
