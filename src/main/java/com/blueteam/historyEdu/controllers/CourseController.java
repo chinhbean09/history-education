@@ -4,6 +4,7 @@ package com.blueteam.historyEdu.controllers;
 import com.blueteam.historyEdu.dtos.CourseDTO;
 import com.blueteam.historyEdu.dtos.CreateCourseDTO;
 import com.blueteam.historyEdu.entities.Course;
+import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.responses.CourseResponse;
 import com.blueteam.historyEdu.responses.GetAllCourseResponse;
 import com.blueteam.historyEdu.responses.ResponseObject;
@@ -73,91 +74,51 @@ public class CourseController {
 
     // api get all course
     @GetMapping("/get-all")
-    public ResponseEntity<ResponseObject> getAllCourse(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        try {
-            Page<GetAllCourseResponse> courseResponses = courseService.getAllCourse(page, size);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    ResponseObject.builder()
-                            .data(courseResponses)
-                            .message(MessageKeys.COURSE_FETCHED_SUCCESSFULLY)
-                            .status(HttpStatus.OK)
-                            .build()
-            );
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    ResponseObject.builder()
-                            .data(null)
-                            .message(e.getMessage())
-                            .status(HttpStatus.BAD_REQUEST)
-                            .build()
-            );
-        }
+    public ResponseEntity<ResponseObject> getAllCourse(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) throws DataNotFoundException {
+        Page<GetAllCourseResponse> courseResponses = courseService.getAllCourse(page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ResponseObject.builder()
+                        .data(courseResponses)
+                        .message(MessageKeys.COURSE_FETCHED_SUCCESSFULLY)
+                        .status(HttpStatus.OK)
+                        .build()
+        );
     }
 
     @GetMapping("/get-all-admin")
-    public ResponseEntity<ResponseObject> getAllCourseAdmin(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        try {
-            Page<CourseResponse> courseResponses = courseService.getAllCourseAdmin(page, size);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    ResponseObject.builder()
-                            .data(courseResponses)
-                            .message(MessageKeys.COURSE_FETCHED_SUCCESSFULLY)
-                            .status(HttpStatus.OK)
-                            .build()
-            );
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    ResponseObject.builder()
-                            .data(null)
-                            .message(e.getMessage())
-                            .status(HttpStatus.BAD_REQUEST)
-                            .build()
-            );
-        }
+    public ResponseEntity<ResponseObject> getAllCourseAdmin(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) throws DataNotFoundException {
+        Page<CourseResponse> courseResponses = courseService.getAllCourseAdmin(page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ResponseObject.builder()
+                        .data(courseResponses)
+                        .message(MessageKeys.COURSE_FETCHED_SUCCESSFULLY)
+                        .status(HttpStatus.OK)
+                        .build()
+        );
     }
 
     @GetMapping("/get-all-paid-course")
-    public ResponseEntity<ResponseObject> getAllPaidCourse() {
-        try {
-            List<GetAllCourseResponse> courseResponses = courseService.getAllCourseWithPriceGreaterThanZero();
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    ResponseObject.builder()
-                            .data(courseResponses)
-                            .message(MessageKeys.COURSE_FETCHED_SUCCESSFULLY)
-                            .status(HttpStatus.OK)
-                            .build()
-            );
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    ResponseObject.builder()
-                            .data(null)
-                            .message(e.getMessage())
-                            .status(HttpStatus.BAD_REQUEST)
-                            .build()
-            );
-        }
+    public ResponseEntity<ResponseObject> getAllPaidCourse() throws DataNotFoundException {
+        List<GetAllCourseResponse> courseResponses = courseService.getAllCourseWithPriceGreaterThanZero();
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ResponseObject.builder()
+                        .data(courseResponses)
+                        .message(MessageKeys.COURSE_FETCHED_SUCCESSFULLY)
+                        .status(HttpStatus.OK)
+                        .build()
+        );
     }
 
     @GetMapping("/get-all-free-course")
-    public ResponseEntity<ResponseObject> getAllFreeCourse() {
-        try {
-            List<GetAllCourseResponse> courseResponses = courseService.getAllCourseWithPriceEqualToZero();
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    ResponseObject.builder()
-                            .data(courseResponses)
-                            .message(MessageKeys.COURSE_FETCHED_SUCCESSFULLY)
-                            .status(HttpStatus.OK)
-                            .build()
-            );
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    ResponseObject.builder()
-                            .data(null)
-                            .message(e.getMessage())
-                            .status(HttpStatus.BAD_REQUEST)
-                            .build()
-            );
-        }
+    public ResponseEntity<ResponseObject> getAllFreeCourse() throws DataNotFoundException {
+        List<GetAllCourseResponse> courseResponses = courseService.getAllCourseWithPriceEqualToZero();
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ResponseObject.builder()
+                        .data(courseResponses)
+                        .message(MessageKeys.COURSE_FETCHED_SUCCESSFULLY)
+                        .status(HttpStatus.OK)
+                        .build()
+        );
     }
 
     // api get course by id
