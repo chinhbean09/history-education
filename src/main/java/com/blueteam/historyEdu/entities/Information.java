@@ -21,6 +21,9 @@ public class Information implements ItemWithStt {
     @Column(name = "info_title")
     private String infoTitle;
 
+    @Column(name = "content")
+    private String content;
+
     @Column(name = "stt")
     private Integer stt;
 
