@@ -96,9 +96,9 @@ public class CourseService implements ICourseService {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Course> courses = courseRepository.findAll(pageable);
-        if (courses.isEmpty()) {
-            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
-        }
+//        if (courses.isEmpty()) {
+//            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
+//        }
         return courses.map(GetAllCourseResponse::fromCourse);
 
     }
@@ -108,27 +108,27 @@ public class CourseService implements ICourseService {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Course> courses = courseRepository.findAll(pageable);
-        if (courses.isEmpty()) {
-            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
-        }
+//        if (courses.isEmpty()) {
+//            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
+//        }
         return courses.map(CourseResponse::fromCourse);
     }
 
     @Override
     public List<GetAllCourseResponse> getAllCourseWithPriceGreaterThanZero() throws DataNotFoundException {
         List<Course> courses = courseRepository.findAllByPriceGreaterThan(0);
-        if (courses.isEmpty()) {
-            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
-        }
+//        if (courses.isEmpty()) {
+//            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
+//        }
         return courses.stream().map(GetAllCourseResponse::fromCourse).collect(Collectors.toList());
     }
 
     @Override
     public List<GetAllCourseResponse> getAllCourseWithPriceEqualToZero() throws DataNotFoundException {
         List<Course> courses = courseRepository.findAllByPriceEquals(0);
-        if (courses.isEmpty()) {
-            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
-        }
+//        if (courses.isEmpty()) {
+//            throw new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND);
+//        }
         return courses.stream().map(GetAllCourseResponse::fromCourse).collect(Collectors.toList());
     }
 
