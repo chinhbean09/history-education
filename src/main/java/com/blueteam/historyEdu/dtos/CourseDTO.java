@@ -20,7 +20,7 @@ public class CourseDTO {
     private Long totalDuration;
     private Long totalChapter;
     private Long totalLessons;
-    private Long price;
+//    private Long price;
     private Long rating;
     private List<String> whatYouWillLearn;
     private List<String> requireToPass;
@@ -36,7 +36,7 @@ public class CourseDTO {
                 .totalDuration(totalDuration)
                 .totalChapter(totalChapter)
                 .totalLessons(totalLessons)
-                .price(price)
+//                .price(price)
                 .rating(rating)
                 .whatsLearned(whatYouWillLearn)
                 .requireToPass(requireToPass)

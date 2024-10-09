@@ -9,6 +9,7 @@ import com.blueteam.historyEdu.exceptions.PermissionDenyException;
 import com.blueteam.historyEdu.repositories.IInformationRepository;
 import com.blueteam.historyEdu.repositories.ILessonRepository;
 import com.blueteam.historyEdu.responses.CourseResponse;
+import com.blueteam.historyEdu.responses.InformationResponse;
 import com.blueteam.historyEdu.utils.MessageKeys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -77,5 +78,13 @@ public class InformationService implements IInformationService {
         } else {
             throw new DataNotFoundException(MessageKeys.INFORMATION_NOT_FOUND);
         }
+    }
+
+    @Override
+    public InformationResponse getInformation(Long informationId) throws DataNotFoundException {
+
+        Information information = informationRepository.findById(informationId)
+                .orElseThrow(() -> new DataNotFoundException(MessageKeys.INFORMATION_NOT_FOUND));
+        return InformationResponse.fromInformation(information);
     }
 }

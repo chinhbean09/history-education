@@ -46,7 +46,7 @@ public class Course {
     @Column(name = "total_lessons", nullable = true)
     private Long totalLessons;
 
-    @Column(name = "price", nullable = false)
+    @Column(name = "price", nullable = true)
     private Long price;
 
     @Column(name = "rating", nullable = false)

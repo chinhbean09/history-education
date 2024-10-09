@@ -89,4 +89,24 @@ public class VideoController {
             );
         }
     }
+    @GetMapping("/get-detail/{videoId}")
+    public ResponseEntity<ResponseObject> getVideo(@PathVariable Long videoId){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    ResponseObject.builder()
+                            .data(videoService.getVideo(videoId))
+                            .message("Get video successfully")
+                            .status(HttpStatus.OK)
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ResponseObject.builder()
+                            .data(null)
+                            .message(e.getMessage())
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .build()
+            );
+        }
+    }
 }
