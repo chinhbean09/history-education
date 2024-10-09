@@ -87,4 +87,25 @@ public class ChapterController {
             );
         }
     }
+
+    @GetMapping("/get-detail/{chapterId}")
+    public ResponseEntity<ResponseObject> getChapter(@PathVariable Long chapterId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    ResponseObject.builder()
+                            .data(chapterService.getChapter(chapterId))
+                            .message("Get chapter successfully")
+                            .status(HttpStatus.OK)
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    ResponseObject.builder()
+                            .data(null)
+                            .message(e.getMessage())
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .build()
+            );
+        }
+    }
 }

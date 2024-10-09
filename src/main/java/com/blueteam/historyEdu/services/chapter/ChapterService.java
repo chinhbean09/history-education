@@ -10,6 +10,7 @@ import com.blueteam.historyEdu.exceptions.PermissionDenyException;
 import com.blueteam.historyEdu.repositories.IChapterRepository;
 import com.blueteam.historyEdu.repositories.ICourseRepository;
 import com.blueteam.historyEdu.repositories.ILessonRepository;
+import com.blueteam.historyEdu.responses.ChapterResponse;
 import com.blueteam.historyEdu.responses.CourseResponse;
 import com.blueteam.historyEdu.utils.MessageKeys;
 import lombok.RequiredArgsConstructor;
@@ -112,5 +113,13 @@ public class ChapterService implements IChapterService {
         } else {
             throw new DataNotFoundException(MessageKeys.CHAPTER_NOT_FOUND);
         }
+    }
+
+    @Override
+    public ChapterResponse getChapter(Long chapterId) throws DataNotFoundException {
+
+        Chapter chapter = chapterRepository.findById(chapterId)
+                .orElseThrow(() -> new DataNotFoundException(MessageKeys.CHAPTER_NOT_FOUND));
+        return ChapterResponse.fromChapter(chapter);
     }
 }
