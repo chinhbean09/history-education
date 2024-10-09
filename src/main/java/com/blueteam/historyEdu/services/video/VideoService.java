@@ -9,6 +9,7 @@ import com.blueteam.historyEdu.repositories.ICourseRepository;
 import com.blueteam.historyEdu.repositories.ILessonRepository;
 import com.blueteam.historyEdu.repositories.IVideoRepository;
 import com.blueteam.historyEdu.responses.CourseResponse;
+import com.blueteam.historyEdu.responses.VideoResponse;
 import com.blueteam.historyEdu.utils.MessageKeys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -108,5 +109,13 @@ public class VideoService implements IVideoService {
         } else {
             throw new DataNotFoundException(MessageKeys.VIDEO_NOT_FOUND);
         }
+    }
+
+    @Override
+    public VideoResponse getVideo(Long videoId) throws DataNotFoundException {
+
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new DataNotFoundException(MessageKeys.VIDEO_NOT_FOUND));
+        return VideoResponse.fromVideo(video);
     }
 }

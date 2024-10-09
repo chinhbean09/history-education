@@ -3,6 +3,7 @@ package com.blueteam.historyEdu.controllers;
 
 import com.blueteam.historyEdu.dtos.InformationDTO;
 import com.blueteam.historyEdu.responses.CourseResponse;
+import com.blueteam.historyEdu.responses.InformationResponse;
 import com.blueteam.historyEdu.responses.ResponseObject;
 import com.blueteam.historyEdu.services.information.IInformationService;
 import com.blueteam.historyEdu.services.lesson.ILessonService;
@@ -75,6 +76,28 @@ public class InformationController {
                     ResponseObject.builder()
                             .data(null)
                             .message(MessageKeys.INFORMATION_DELETED_SUCCESSFULLY)
+                            .status(HttpStatus.OK)
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    ResponseObject.builder()
+                            .data(null)
+                            .message(e.getMessage())
+                            .status(HttpStatus.BAD_REQUEST)
+                            .build()
+            );
+        }
+    }
+
+    @GetMapping("/get-detail/{informationId}")
+    public ResponseEntity<ResponseObject> getInformationById(@PathVariable Long informationId) {
+        try {
+            InformationResponse information = informationService.getInformation(informationId);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    ResponseObject.builder()
+                            .data(information)
+                            .message("Information fetched successfully")
                             .status(HttpStatus.OK)
                             .build()
             );

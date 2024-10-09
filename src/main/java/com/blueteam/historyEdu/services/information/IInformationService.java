@@ -4,6 +4,7 @@ import com.blueteam.historyEdu.dtos.InformationDTO;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
 import com.blueteam.historyEdu.responses.CourseResponse;
+import com.blueteam.historyEdu.responses.InformationResponse;
 
 public interface IInformationService {
 
@@ -12,4 +13,6 @@ public interface IInformationService {
     CourseResponse updateInformation(Long informationId, InformationDTO informationDTO) throws DataNotFoundException, PermissionDenyException;
 
     void deleteInformation(Long informationId) throws DataNotFoundException;
+
+    InformationResponse getInformation(Long informationId) throws DataNotFoundException;
 }
