@@ -31,7 +31,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/orders")
 public class OrderController {
-
     private final PayOS payOS;
     private final UserService userService;
     private final IUserRepository userRepository;
@@ -97,6 +96,25 @@ public class OrderController {
         }
     }
 
+    @PutMapping(path = "/{orderId}")
+    public ObjectNode cancelOrder(@PathVariable("orderId") int orderId) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode response = objectMapper.createObjectNode();
+        try {
+            PaymentLinkData order = payOS.cancelPaymentLink(orderId, null);
+            response.set("data", objectMapper.valueToTree(order));
+            response.put("error", 0);
+            response.put("message", "ok");
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("error", -1);
+            response.put("message", e.getMessage());
+            response.set("data", null);
+            return response;
+        }
+    }
+
     @GetMapping(value = "/cancel")
     public RedirectView cancel(@RequestParam Map<String, String> params) throws Exception {
         long packageId = Long.parseLong(params.get("packageId"));
@@ -112,7 +130,6 @@ public class OrderController {
         LocalDate now = LocalDate.now();
         LocalDate expiryDate = now.plusDays(servicePackage.getDuration());
         PaymentLinkData order = payOS.getPaymentLinkInformation(orderId);
-
         if ("CANCELLED".equals(order.getStatus())) {
             Purchase purchase = Purchase.builder()
                     .servicePackage(servicePackage)
@@ -126,12 +143,12 @@ public class OrderController {
             purchaseRepository.save(purchase);
 
             user.setPackageStatus(PackageStatus.CANCELLED);
+
+            //cancel in payos
+            payOS.cancelPaymentLink(orderId, null);
+
             userRepository.save(user);
         }
-
-
-        System.out.println("Payment was canceled for userId: " + userId + " and packageId: " + packageId);
-
         return new RedirectView("https://www.google.com");
     }
 
@@ -202,24 +219,7 @@ public class OrderController {
         }
     }
 
-    @PutMapping(path = "/{orderId}")
-    public ObjectNode cancelOrder(@PathVariable("orderId") int orderId) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode response = objectMapper.createObjectNode();
-        try {
-            PaymentLinkData order = payOS.cancelPaymentLink(orderId, null);
-            response.set("data", objectMapper.valueToTree(order));
-            response.put("error", 0);
-            response.put("message", "ok");
-            return response;
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.put("error", -1);
-            response.put("message", e.getMessage());
-            response.set("data", null);
-            return response;
-        }
-    }
+
 
     @PostMapping(path = "/confirm-webhook")
     public ObjectNode confirmWebhook(@RequestBody Map<String, String> requestBody) {
