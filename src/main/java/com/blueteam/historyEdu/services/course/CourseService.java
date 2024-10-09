@@ -79,7 +79,7 @@ public class CourseService implements ICourseService {
             course.setTotalDuration(courseDTO.getTotalDuration());
             course.setTotalChapter(courseDTO.getTotalChapter());
             course.setTotalLessons(courseDTO.getTotalLessons());
-            course.setPrice(courseDTO.getPrice());
+//            course.setPrice(courseDTO.getPrice());
             course.setRating(courseDTO.getRating());
             course.setWhatsLearned(courseDTO.getWhatYouWillLearn());
             course.setRequireToPass(courseDTO.getRequireToPass());
