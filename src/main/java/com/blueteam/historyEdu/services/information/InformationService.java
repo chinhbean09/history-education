@@ -55,6 +55,7 @@ public class InformationService implements IInformationService {
             Information information = informationRepository.findById(informationId)
                     .orElseThrow(() -> new DataNotFoundException(MessageKeys.INFORMATION_NOT_FOUND));
             information.setInfoTitle(informationDTO.getInfoTitle());
+            information.setContent(informationDTO.getContent());
             information.setStt(informationDTO.getStt());
             informationRepository.save(information);
             return CourseResponse.fromCourse(information.getLesson().getChapter().getCourse());
