@@ -4,12 +4,14 @@ import com.blueteam.historyEdu.dtos.QuestionDTO;
 import com.blueteam.historyEdu.dtos.quiz.QuizAttemptDTO;
 import com.blueteam.historyEdu.dtos.quiz.QuizDTO;
 import com.blueteam.historyEdu.dtos.quiz.QuizResultDTO;
+import com.blueteam.historyEdu.dtos.quiz.UpdateQuizDTO;
 import com.blueteam.historyEdu.entities.*;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.repositories.IChapterRepository;
 import com.blueteam.historyEdu.repositories.ILessonRepository;
 import com.blueteam.historyEdu.repositories.IQuizAttemptRepository;
 import com.blueteam.historyEdu.repositories.IQuizRepository;
+import com.blueteam.historyEdu.responses.QuizResponse;
 import com.blueteam.historyEdu.services.question.IQuestionService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -67,12 +69,14 @@ public class QuizService implements IQuizService  {
 
 
     @Override
-    public Quiz updateQuiz(Long id, Quiz quizDetails) throws DataNotFoundException {
+    public QuizResponse updateQuiz(Long id, UpdateQuizDTO quizDetails) throws DataNotFoundException {
         Quiz quiz = quizRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Quiz not found with id " + id));
         quiz.setTitle(quizDetails.getTitle());
         quiz.setExpirationTime(quizDetails.getExpirationTime());
-        return quizRepository.save(quiz);
+        quiz.setStt(quizDetails.getStt());
+        quizRepository.save(quiz);
+        return QuizResponse.fromQuiz(quiz);
     }
     @Override
     public void deleteQuiz(Long id) throws DataNotFoundException {

@@ -3,6 +3,7 @@ package com.blueteam.historyEdu.controllers;
 import com.blueteam.historyEdu.dtos.quiz.QuizAttemptDTO;
 import com.blueteam.historyEdu.dtos.quiz.QuizDTO;
 import com.blueteam.historyEdu.dtos.quiz.QuizResultDTO;
+import com.blueteam.historyEdu.dtos.quiz.UpdateQuizDTO;
 import com.blueteam.historyEdu.entities.Quiz;
 import com.blueteam.historyEdu.entities.User;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
@@ -67,8 +68,8 @@ public class QuizController {
     @PutMapping("/update-quiz/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @Transactional
-    public ResponseEntity<Quiz> updateQuiz(@PathVariable Long id, @RequestBody Quiz quizDetails) throws DataNotFoundException {
-        Quiz updatedQuiz = quizService.updateQuiz(id, quizDetails);
+    public ResponseEntity<QuizResponse> updateQuiz(@PathVariable Long id, @RequestBody UpdateQuizDTO quizDetails) throws DataNotFoundException {
+        QuizResponse updatedQuiz = quizService.updateQuiz(id, quizDetails);
         return ResponseEntity.ok(updatedQuiz);
     }
     @DeleteMapping("/delete-quiz/{lessonId}/{quizId}")
