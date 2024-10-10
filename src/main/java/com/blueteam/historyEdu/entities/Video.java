@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -55,6 +56,9 @@ public class Video implements ItemWithStt {
     @ManyToOne
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
+
+    @OneToMany(mappedBy="video", cascade=CascadeType.ALL, orphanRemoval=true)
+    private List<VideoProgress> videoProgresses = new ArrayList<>();
 
     @Override
     public void setStt(int stt) {

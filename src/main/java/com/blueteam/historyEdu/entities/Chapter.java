@@ -30,16 +30,9 @@ public class Chapter {
     @Column(name = "url", nullable = true)
     private String url;
 
-//    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Video> videos;  // Should not cause video_id to appear in chapters
-
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
-
-//    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-//    @JsonManagedReference
-//    private List<Quiz> quizzes;
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Lesson> lessons =new ArrayList<>();

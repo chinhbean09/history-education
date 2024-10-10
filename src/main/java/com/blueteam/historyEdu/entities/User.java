@@ -74,12 +74,6 @@ public class User extends BaseEntity implements UserDetails, OAuth2User {
     @OneToMany(mappedBy = "user")
     private List<Purchase> purchases;
 
-    @OneToMany(mappedBy = "user")
-    private List<VideoProgress> videoProgressList;
-
-    @OneToMany(mappedBy = "user")
-    private List<UserProgress> userProgressList;
-
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
@@ -87,6 +81,10 @@ public class User extends BaseEntity implements UserDetails, OAuth2User {
     @Column(name = "package_status")
     @Enumerated(EnumType.STRING)
     private PackageStatus packageStatus;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Progress> progresses;
+
 
     @Override
     public Map<String, Object> getAttributes() {

@@ -11,18 +11,31 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class VideoProgress {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "progress_id", nullable = false)
+    private Progress progress;
+
+    @ManyToOne
     @JoinColumn(name = "video_id", nullable = false)
     private Video video;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "watched_duration")
+    private Double watchedDuration;
 
-    @Column(name = "completed", nullable = false)
-    private Long completed;
+    @Column(name = "duration")
+    private Double duration;
+
+    @Column(name = "is_completed")
+    private boolean isCompleted;
+
+    // Cập nhật watchedDuration và tự động tính toán isCompleted
+    public void updateWatchedDuration(double newWatchedDuration) {
+        this.watchedDuration = newWatchedDuration;
+        this.isCompleted = (this.watchedDuration / this.duration) >= 0.8;
+    }
 }
