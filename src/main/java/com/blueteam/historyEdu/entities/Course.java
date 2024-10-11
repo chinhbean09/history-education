@@ -28,10 +28,10 @@ public class Course {
     @Column(name = "introduction_video", nullable = true)
     private String introductionVideoUrl;
 
-    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "description", nullable = false, length = 1000)
     private String description;
 
-    @Column(name = "more_information", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "more_information", nullable = false, length = 1000)
     private String moreInformation;
 
     @Column(name = "image", nullable = true)

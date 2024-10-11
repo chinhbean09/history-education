@@ -30,6 +30,9 @@ public class Chapter {
     @Column(name = "url", nullable = true)
     private String url;
 
+    @Column(name = "stt", nullable = false)
+    private Integer stt;
+
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;

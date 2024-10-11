@@ -22,7 +22,7 @@ public class Video implements ItemWithStt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "video_name" ,columnDefinition = "TEXT", nullable = false)
+    @Column(name = "video_name" ,length = 1000, nullable = false)
     private String videoName;
 
 //    @Column(name = "description")
@@ -43,7 +43,7 @@ public class Video implements ItemWithStt {
 //    @Column(name = "create_at")
 //    private LocalDateTime createAt;
 
-    @Column(name="more_information", columnDefinition = "TEXT",nullable = false)
+    @Column(name="more_information", length = 1000 ,nullable = false)
     private String moreInformation;
 
     @Convert(converter = StringListConverter.class)
