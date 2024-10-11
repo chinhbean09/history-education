@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -103,6 +104,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 //                            response.getWriter().write("{\"error\":\"" + exception.getMessage() + "\"}");
 //                        })
 //                );
+        http.securityMatcher(String.valueOf(EndpointRequest.toAnyEndpoint()));
+
         return http.build();
     }
 

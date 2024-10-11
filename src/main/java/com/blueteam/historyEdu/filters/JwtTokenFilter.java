@@ -1,6 +1,7 @@
 package com.blueteam.historyEdu.filters;
 
 import com.blueteam.historyEdu.components.JwtTokenUtils;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,7 +26,6 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-
 public class JwtTokenFilter extends OncePerRequestFilter {
     @Value("${api.prefix}")
     private String apiPrefix;
@@ -36,35 +37,53 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        if (isBypassToken(request)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                    "authHeader null or not started with Bearer");
-            return;
-        }
-        final String token = authHeader.substring(7);
-        if (token.isEmpty()) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        final Map<String, String> identifier = jwtTokenUtils.extractIdentifier(token);
-        if ((identifier != null)
-                && SecurityContextHolder.getContext().getAuthentication() == null) {
-            String emailOrPhone = identifier.get("email") != null ? identifier.get("email") : identifier.get("phoneNumber");
-            UserDetails userDetails = userDetailsService.loadUserByUsername(emailOrPhone);
-            if (jwtTokenUtils.validateToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        try {
+            if (isBypassToken(request)) {
+                filterChain.doFilter(request, response);
+                return;
             }
+
+            final String authHeader = request.getHeader("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization header is missing or invalid.");
+                return;
+            }
+
+            final String token = authHeader.substring(7);
+            if (token.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is empty.");
+                return;
+            }
+
+            final Map<String, String> identifier = jwtTokenUtils.extractIdentifier(token);
+            if (identifier != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                String emailOrPhone = identifier.get("email") != null ? identifier.get("email") : identifier.get("phoneNumber");
+                UserDetails userDetails = userDetailsService.loadUserByUsername(emailOrPhone);
+
+                if (jwtTokenUtils.validateToken(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                } else {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token.");
+                    return;
+                }
+            }
+            filterChain.doFilter(request, response);
+
+
+        } catch (JwtException e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token parsing error: " + e.getMessage());
+        } catch (UsernameNotFoundException e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found: " + e.getMessage());
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An unexpected error occurred: " + e.getMessage());
         }
-        filterChain.doFilter(request, response);
+
     }
+
+
 
 
     private boolean isBypassToken(@NonNull HttpServletRequest request) {

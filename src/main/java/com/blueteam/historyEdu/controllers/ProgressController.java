@@ -23,7 +23,7 @@ public class ProgressController {
         return ResponseEntity.ok(progressDTOList);
     }
 
-    // udpate  tiến trình của người dùng cho một chương học cụ thể
+    // udpate   tiến trình của người dùng cho một chương học cụ thể
     @PutMapping("/user/{userId}/chapter/{chapterId}")
     public ResponseEntity<Void> updateProgress(@PathVariable Long userId, @PathVariable Long chapterId, @RequestBody ProgressDTO progressDTO) {
         progressService.updateProgress(userId, chapterId, progressDTO);
