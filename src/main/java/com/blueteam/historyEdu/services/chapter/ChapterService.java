@@ -87,6 +87,7 @@ public class ChapterService implements IChapterService {
                     .orElseThrow(() -> new DataNotFoundException(MessageKeys.CHAPTER_NOT_FOUND));
             // Update the chapter
             chapter.setChapterName(chapterDTO.getChapterName());
+            chapter.setStt(chapterDTO.getStt());
             // Save the updated chapter
             chapterRepository.save(chapter);
             return CourseResponse.fromCourse(chapter.getCourse());

@@ -15,6 +15,7 @@ public class ChapterResponse {
 
     private Long id;
     private String chapterName;
+    private Integer stt;
     private List<LessonReponse> lesson;
 
     public static ChapterResponse fromChapter(Chapter chapter) {
@@ -26,6 +27,7 @@ public class ChapterResponse {
         return ChapterResponse.builder()
                 .id(chapter.getId())
                 .chapterName(chapter.getChapterName())
+                .stt(chapter.getStt())
                 .lesson(lesson)
                 .build();
     }

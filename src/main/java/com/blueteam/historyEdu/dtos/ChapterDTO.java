@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class ChapterDTO {
     @JsonProperty("chapterName")
     private String chapterName;
+    private Integer stt;
 
 //    @JsonProperty("courseId") // Add this to ensure course is associated
 //    private Long courseId;
@@ -22,6 +23,7 @@ public class ChapterDTO {
     public Chapter toEntity(Course course) {
         return Chapter.builder()
                 .chapterName(chapterName)
+                .stt(stt)
                 .course(course) // Ensure course is set in the entity
                 .lessons(new ArrayList<>())
                 .build();

@@ -18,10 +18,10 @@ public class Information implements ItemWithStt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "info_title",columnDefinition = "TEXT",nullable = false)
+    @Column(name = "info_title",length = 1000 ,nullable = false)
     private String infoTitle;
 
-    @Column(name = "content", columnDefinition = "TEXT",nullable = false)
+    @Column(name = "content", length = 1000 ,nullable = false)
     private String content;
 
     @Column(name = "stt")
