@@ -7,16 +7,21 @@ This project aims to develop an online platform for educating about Vietnamese h
 - **Resources/Quiz**: Reference materials, books, and other resources.
 - **Videos**: Explanatory videos summarizing historical events.
 
-#Tech Stack
-Node.js
-Express.js
-MongoDB
+# Tech We Used Till Now
+Spring Boot
+Spring Security
+PostgreSql
+H2-Database
+JPA
+Swagger 2
+API Calls
+REST API
+Mail Server
+Cloudinary
 Docker
 Nginx
-Kubernetes
-Stripe
+Jenkins
 
-
-#Contact
+# Contact
 If you have any questions, please email us at: chinh0726@gmail.com.
 
