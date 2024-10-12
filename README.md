@@ -8,19 +8,19 @@ This project aims to develop an online platform for educating about Vietnamese h
 - **Videos**: Explanatory videos summarizing historical events.
 
 # Tech We Used Till Now
-Spring Boot
-Spring Security
-PostgreSql
-H2-Database
-JPA
-Swagger 2
-API Calls
-REST API
-Mail Server
-Cloudinary
-Docker
-Nginx
-Jenkins
+- Spring Boot
+- Spring Security
+- PostgreSql
+- H2-Database
+- JPA
+- Swagger 2
+- API Calls
+- REST API
+- Mail Server
+- Cloudinary
+- Docker
+- Nginx
+- Jenkins
 
 # Contact
 If you have any questions, please email us at: chinh0726@gmail.com.
