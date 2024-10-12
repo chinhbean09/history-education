@@ -104,7 +104,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 //                            response.getWriter().write("{\"error\":\"" + exception.getMessage() + "\"}");
 //                        })
 //                );
-        http.securityMatcher(String.valueOf(EndpointRequest.toAnyEndpoint()));
+//        http.securityMatcher(String.valueOf(EndpointRequest.toAnyEndpoint()));
 
         return http.build();
     }
