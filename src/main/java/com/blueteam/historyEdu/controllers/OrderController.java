@@ -153,13 +153,11 @@ public class OrderController {
     }
 
     @PostMapping(path = "/create")
-
     public ObjectNode createPaymentLink(@RequestBody CreatePaymentLinkRequestBody requestBody, HttpServletRequest request) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
-
         try {
             String baseUrl = getBaseUrl(request);
 
