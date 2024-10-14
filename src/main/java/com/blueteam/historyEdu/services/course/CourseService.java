@@ -73,7 +73,8 @@ public class CourseService implements ICourseService {
         if (currentUser.getRole().getRoleName().equals("ADMIN")) {
             Course course = courseRepository.findById(courseId).orElseThrow(() -> new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND));
             course.setCourseName(courseDTO.getCourseName());
-            course.setDescription(courseDTO.getMoreInformation());
+            course.setDescription(courseDTO.getDescription());
+            course.setMoreInformation(courseDTO.getMoreInformation());
             course.setImage(courseDTO.getImage());
             course.setIntroductionVideoUrl(courseDTO.getIntroductionVideoUrl());
             course.setTotalDuration(courseDTO.getTotalDuration());

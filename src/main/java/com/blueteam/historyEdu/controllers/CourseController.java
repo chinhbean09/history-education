@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +29,7 @@ public class CourseController {
 
     // api create course
     @PostMapping("/create")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<ResponseObject> createCourse(@RequestBody CourseDTO courseDTO) {
         try {
             CourseResponse courseResponse = courseService.createCourse(courseDTO);
