@@ -13,6 +13,7 @@ import com.blueteam.historyEdu.utils.MessageKeys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -191,10 +192,34 @@ public class CourseController {
         }
     }
 
-    @PostMapping("/create-full-course")
-    public ResponseEntity<ResponseObject> createFullCourse(@RequestBody CreateCourseDTO createCourseDTO) {
+//    @PostMapping("/create-full-course")
+//    public ResponseEntity<ResponseObject> createFullCourse(@RequestBody CreateCourseDTO createCourseDTO) {
+//        try {
+//            CourseResponse courseResponse = courseService.createFullCourse(createCourseDTO);
+//            return ResponseEntity.status(HttpStatus.OK).body(
+//                    ResponseObject.builder()
+//                            .data(courseResponse)
+//                            .message(MessageKeys.COURSE_CREATED_SUCCESSFULLY)
+//                            .status(HttpStatus.OK)
+//                            .build()
+//            );
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+//                    ResponseObject.builder()
+//                            .data(null)
+//                            .message(e.getMessage())
+//                            .status(HttpStatus.BAD_REQUEST)
+//                            .build()
+//            );
+//        }
+//    }
+
+    @PostMapping(value = "/create-full-course", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseObject> createFullCourse(
+            @RequestPart("courseDTO") CreateCourseDTO createCourseDTO,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
         try {
-            CourseResponse courseResponse = courseService.createFullCourse(createCourseDTO);
+            CourseResponse courseResponse = courseService.createFullCourse(createCourseDTO, image);
             return ResponseEntity.status(HttpStatus.OK).body(
                     ResponseObject.builder()
                             .data(courseResponse)

@@ -181,9 +181,64 @@ public class CourseService implements ICourseService {
         return null;
     }
 
+//    @Override
+//    @Transactional
+//    public CourseResponse createFullCourse(CreateCourseDTO createCourseDTO) throws DataNotFoundException, PermissionDenyException {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        User currentUser = (User) authentication.getPrincipal();
+//
+//        if (currentUser.getRole().getRoleName().equals("ADMIN")) {
+//            // Tạo mới course
+//            Course course = createCourseDTO.toEntity();
+//
+//            // Initialize totalChapter and totalLessons to 0
+//            course.setTotalChapter(0L);
+//            course.setTotalLessons(0L);
+//
+//            courseRepository.save(course);
+//
+//            if (course.getChapters() == null) {
+//                course.setChapters(new ArrayList<>());  // Initialize if null
+//            }
+//
+//            // Tạo các chapter nếu có
+//            if (createCourseDTO.getChapters() != null) {
+//                for (ChapterDTO chapterDTO : createCourseDTO.getChapters()) {
+//                    Chapter chapter = chapterDTO.toEntity(course);
+//                    chapterRepository.save(chapter);
+//                    course.getChapters().add(chapter);
+//
+//                    // Increment totalChapter by 1
+//                    course.setTotalChapter(course.getTotalChapter() + 1);
+//
+//                    // Tạo các lessons cho mỗi chapter
+//                    if (chapter.getLessons() == null) {
+//                        chapter.setLessons(new ArrayList<>());
+//                    }
+//
+//                    // Add lessons (You can modify this part to create real lessons as needed)
+//                    Lesson lesson = Lesson.builder()
+//                            .chapter(chapter)
+//                            .build();
+//                    lessonRepository.save(lesson);
+//                    chapter.getLessons().add(lesson);
+//
+//                    // Increment totalLessons by 1 for each lesson
+//                    course.setTotalLessons(course.getTotalLessons() + 1);
+//                }
+//            }
+//
+//            courseRepository.save(course); // Update course with new totalChapter and totalLessons
+//
+//            return CourseResponse.fromCourse(course);
+//        } else {
+//            throw new PermissionDenyException(MessageKeys.PERMISSION_DENIED);
+//        }
+//    }
+
     @Override
     @Transactional
-    public CourseResponse createFullCourse(CreateCourseDTO createCourseDTO) throws DataNotFoundException, PermissionDenyException {
+    public CourseResponse createFullCourse(CreateCourseDTO createCourseDTO, MultipartFile image) throws DataNotFoundException, PermissionDenyException, IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
 
@@ -194,6 +249,24 @@ public class CourseService implements ICourseService {
             // Initialize totalChapter and totalLessons to 0
             course.setTotalChapter(0L);
             course.setTotalLessons(0L);
+
+            // Upload image nếu có
+            if (image != null && !image.isEmpty()) {
+                // Check if the uploaded file is an image
+                MediaType mediaType = MediaType.parseMediaType(Objects.requireNonNull(image.getContentType()));
+                if (!mediaType.isCompatibleWith(MediaType.IMAGE_JPEG) &&
+                        !mediaType.isCompatibleWith(MediaType.IMAGE_PNG)) {
+                    throw new InvalidParamException(MessageKeys.UPLOAD_IMAGES_FILE_MUST_BE_IMAGE);
+                }
+
+                // Upload the image to Cloudinary
+                Map uploadResult = cloudinary.uploader().upload(image.getBytes(),
+                        ObjectUtils.asMap("folder", "course_image/" + course.getId(), "public_id", image.getOriginalFilename()));
+
+                // Get the URL of the uploaded image
+                String imageUrl = uploadResult.get("secure_url").toString();
+                course.setImage(imageUrl); // Gán URL của ảnh vào course
+            }
 
             courseRepository.save(course);
 
