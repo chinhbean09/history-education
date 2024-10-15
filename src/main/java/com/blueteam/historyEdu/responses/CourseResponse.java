@@ -21,6 +21,8 @@ public class CourseResponse {
     private String introductionVideoUrl;
     @JsonProperty("moreInformation")
     private String description;
+    @JsonProperty("moreInformation")
+    private String moreInformation;
     @JsonProperty("image")
     private String image;
     @JsonProperty("totalDuration")
@@ -58,6 +60,7 @@ public class CourseResponse {
                 .courseName(course.getCourseName())
                 .introductionVideoUrl(course.getIntroductionVideoUrl())
                 .description(course.getDescription())
+                .moreInformation(course.getMoreInformation())
                 .image(course.getImage())
                 .chapters(chapters)
                 .totalDuration(course.getTotalDuration())
