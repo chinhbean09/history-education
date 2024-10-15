@@ -59,7 +59,7 @@ public class OrderController {
                 response.put("error", -1);
                 response.put("message", "Payment not completed or failed.");
                 response.set("data", null);
-                return new RedirectView("https://www.google.com");
+                return new RedirectView("http://localhost:3000/fail");
             }
 
             LocalDate now = LocalDate.now();
@@ -85,14 +85,14 @@ public class OrderController {
             response.put("error", 0);
             response.put("message", "Package successfully purchased.");
             response.set("data", null);
-            return new RedirectView("https://www.google.com");
+            return new RedirectView("http://localhost:3000/success");
 
         } catch (Exception e) {
             e.printStackTrace();
             response.put("error", -1);
             response.put("message", e.getMessage());
             response.set("data", null);
-            return new RedirectView("https://www.google.com");
+            return new RedirectView("http://localhost:3000/fail");
         }
     }
 
@@ -149,7 +149,7 @@ public class OrderController {
 
             userRepository.save(user);
         }
-        return new RedirectView("https://www.google.com");
+        return new RedirectView("http://localhost:3000/fail");
     }
 
     @PostMapping(path = "/create")
