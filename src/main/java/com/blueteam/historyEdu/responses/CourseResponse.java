@@ -19,7 +19,7 @@ public class CourseResponse {
     private String courseName;
     @JsonProperty("introductionVideo")
     private String introductionVideoUrl;
-    @JsonProperty("moreInformation")
+    @JsonProperty("description")
     private String description;
     @JsonProperty("moreInformation")
     private String moreInformation;
