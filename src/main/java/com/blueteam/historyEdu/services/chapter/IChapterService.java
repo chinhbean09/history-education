@@ -15,4 +15,8 @@ public interface IChapterService {
     void deleteChapter(Long chapterId) throws DataNotFoundException;
 
     ChapterResponse getChapter(Long chapterId) throws DataNotFoundException;
-}
+
+    public CourseResponse updateFullChapter(Long chapterId, ChapterDTO chapterDTO)
+            throws DataNotFoundException, PermissionDenyException;
+
+    }

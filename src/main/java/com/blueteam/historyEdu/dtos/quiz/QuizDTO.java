@@ -1,6 +1,7 @@
 package com.blueteam.historyEdu.dtos.quiz;
 
 import com.blueteam.historyEdu.dtos.QuestionDTO;
+import com.blueteam.historyEdu.entities.Quiz;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -25,4 +26,14 @@ public class QuizDTO {
     private Long lessonId;
 
     private List<QuestionDTO> questions;
+
+    public Quiz toEntity() {
+        Quiz quiz = new Quiz();
+        quiz.setTitle(this.title);
+        quiz.setExpirationTime(this.expirationTime);
+        quiz.setStt(this.stt);
+        // If you have logic to set the lesson reference later, you can skip setting lessonId here.
+        return quiz;
+    }
+
 }

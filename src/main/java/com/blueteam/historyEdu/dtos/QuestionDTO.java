@@ -24,5 +24,14 @@ public class QuestionDTO {
                 question.getAnswers()
         );
     }
+    public Question toEntity() {
+        return Question.builder()
+                .id(this.id)  // Use the ID if present (for updates)
+                .text(this.text)
+                .correctAnswer(this.correctAnswer)
+                .answers(this.answers)
+                .build();
+    }
+
 }
 

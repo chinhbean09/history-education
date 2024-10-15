@@ -1,10 +1,8 @@
 package com.blueteam.historyEdu.services.chapter;
 
-import com.blueteam.historyEdu.dtos.ChapterDTO;
-import com.blueteam.historyEdu.entities.Chapter;
-import com.blueteam.historyEdu.entities.Course;
-import com.blueteam.historyEdu.entities.Lesson;
-import com.blueteam.historyEdu.entities.User;
+import com.blueteam.historyEdu.dtos.*;
+import com.blueteam.historyEdu.dtos.quiz.QuizDTO;
+import com.blueteam.historyEdu.entities.*;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
 import com.blueteam.historyEdu.repositories.IChapterRepository;
@@ -19,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -95,6 +94,89 @@ public class ChapterService implements IChapterService {
             throw new PermissionDenyException(MessageKeys.PERMISSION_DENIED);
         }
     }
+    @Override
+    @Transactional
+    public CourseResponse updateFullChapter(Long chapterId, ChapterDTO chapterDTO)
+            throws DataNotFoundException, PermissionDenyException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+
+        if (!currentUser.getRole().getRoleName().equals("ADMIN")) {
+            throw new PermissionDenyException(MessageKeys.PERMISSION_DENIED);
+        }
+
+        // Fetch the chapter
+        Chapter chapter = chapterRepository.findById(chapterId)
+                .orElseThrow(() -> new DataNotFoundException(MessageKeys.CHAPTER_NOT_FOUND));
+
+        // Update the basic fields of the chapter
+        chapter.setChapterName(chapterDTO.getChapterName());
+        chapter.setDescription(chapterDTO.getDescription());
+        chapter.setUrl(chapterDTO.getUrl());
+        chapter.setStt(chapterDTO.getStt());
+
+        // Update the lessons associated with this chapter
+        List<Lesson> existingLessons = chapter.getLessons();
+        List<LessonDTO> updatedLessons = chapterDTO.getLessons();
+
+        // Remove lessons that are no longer in the DTO
+        existingLessons.removeIf(existingLesson ->
+                updatedLessons.stream().noneMatch(dto -> dto.getId().equals(existingLesson.getId())));
+
+        // Add or update lessons from DTO
+        for (LessonDTO lessonDTO : updatedLessons) {
+            Lesson lesson = existingLessons.stream()
+                    .filter(existingLesson -> existingLesson.getId().equals(lessonDTO.getId()))
+                    .findFirst()
+                    .orElse(new Lesson());
+            lesson.setChapter(chapter);
+
+            // Update Videos
+            lesson.getVideos().clear();
+            for (VideoDTO videoDTO : lessonDTO.getVideos()) {
+                lesson.getVideos().add(videoDTO.toEntity());
+            }
+
+            // Update Informations
+            lesson.getInformations().clear();
+            for (InformationDTO infoDTO : lessonDTO.getInformations()) {
+                lesson.getInformations().add(infoDTO.toEntity());
+            }
+
+            // Update Quizzes
+            lesson.getQuizzes().clear(); // Clear existing quizzes for this lesson
+
+            for (QuizDTO quizDTO : lessonDTO.getQuizzes()) {
+                // Convert QuizDTO to Quiz entity
+                Quiz quiz = quizDTO.toEntity();
+                quiz.setLesson(lesson); // Set the lesson reference for the quiz
+
+                // Clear existing questions for this quiz (if any)
+                quiz.getQuestions().clear();
+
+                // Add questions to the quiz
+                for (QuestionDTO questionDTO : quizDTO.getQuestions()) {
+                    quiz.getQuestions().add(questionDTO.toEntity());
+                }
+
+                // Add quiz to the lesson
+                lesson.getQuizzes().add(quiz);
+            }
+
+
+            if (lesson.getId() == null) { // New lesson
+                existingLessons.add(lesson);
+            }
+        }
+
+
+        // Save the updated chapter
+        chapterRepository.save(chapter);
+
+        return CourseResponse.fromCourse(chapter.getCourse());
+    }
+
+
 
     @Override
     @Transactional

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -13,12 +14,19 @@ import java.util.ArrayList;
 @Getter
 @Setter
 public class ChapterDTO {
-    @JsonProperty("chapterName")
+
+    private Long id;
+
     private String chapterName;
+
+    private String description;
+
+    private String url;
+
     private Integer stt;
 
-//    @JsonProperty("courseId") // Add this to ensure course is associated
-//    private Long courseId;
+    private List<LessonDTO> lessons; // Add this field to update lessons
+
 
     public Chapter toEntity(Course course) {
         return Chapter.builder()
