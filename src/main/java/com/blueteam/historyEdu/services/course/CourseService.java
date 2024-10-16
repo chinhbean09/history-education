@@ -285,7 +285,7 @@ public class CourseService implements ICourseService {
                 for (Information info : lesson.getInformations()) {
                     InfoProgress infoProgress = InfoProgress.builder()
                             .information(info)
-                            .infoId(String.valueOf(info.getId()))
+                            .infoId(info.getId())
                             .progress(progress)  // Link to progress
                             .isViewed(false)
                             .build();

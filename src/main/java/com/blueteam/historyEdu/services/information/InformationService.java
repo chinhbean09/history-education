@@ -61,7 +61,7 @@ public class InformationService implements IInformationService {
         for (Progress progress : enrolledUsersProgress) {
             InfoProgress infoProgress = InfoProgress.builder()
                     .information(information)
-                    .infoId(String.valueOf(information.getId()))
+                    .infoId(information.getId())
                     .progress(progress)
                     .isViewed(false)
                     .build();
