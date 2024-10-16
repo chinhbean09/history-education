@@ -68,7 +68,7 @@ public class QuizController {
     @PutMapping("/update-quiz/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @Transactional
-    public ResponseEntity<QuizResponse> updateQuiz(@PathVariable Long id, @RequestBody UpdateQuizDTO quizDetails) throws DataNotFoundException {
+    public ResponseEntity<QuizResponse> updateQuiz(@PathVariable Long id, @RequestBody QuizDTO quizDetails) throws DataNotFoundException {
         QuizResponse updatedQuiz = quizService.updateQuiz(id, quizDetails);
         return ResponseEntity.ok(updatedQuiz);
     }

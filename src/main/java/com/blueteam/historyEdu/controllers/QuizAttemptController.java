@@ -44,6 +44,4 @@ public class QuizAttemptController {
         List<QuizAttempt> attempts = quizAttemptService.getAttemptsByUserId(userId);
         return ResponseEntity.ok(attempts);
     }
-
-
 }
