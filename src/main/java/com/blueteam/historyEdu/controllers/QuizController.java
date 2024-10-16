@@ -43,7 +43,7 @@ public class QuizController {
 
 
     @GetMapping("/get-quiz-by-id/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_CUSTOMER')")
     @Transactional
     public ResponseEntity<QuizResponse> getQuizById(@PathVariable Long id) throws DataNotFoundException {
         Optional<Quiz> quizOptional = quizService.getQuizById(id);
@@ -80,15 +80,8 @@ public class QuizController {
         return ResponseEntity.noContent().build();
     }
 
-//    @PostMapping("/check-answers")
-//    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-//    public ResponseEntity<Integer> checkAnswers(@RequestBody QuizAnswersDTO quizAnswersDTO) {
-//        int correctCount = quizService.checkAnswers(quizAnswersDTO.getQuizId(), quizAnswersDTO.getUserAnswers());
-//        return ResponseEntity.ok(correctCount);
-//    }
-
     @PostMapping("/check-answers")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_CUSTOMER')")
     public ResponseEntity<QuizResultDTO> checkQuiz(@RequestBody QuizAttemptDTO quizAttemptDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();

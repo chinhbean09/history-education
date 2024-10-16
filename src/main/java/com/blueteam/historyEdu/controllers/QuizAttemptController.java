@@ -9,6 +9,7 @@ import com.blueteam.historyEdu.services.quizattempt.IQuizAttemptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class QuizAttemptController {
     private final IQuizService quizService; // Service to get quiz details
 
     @PostMapping("/attempt/{quizId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_CUSTOMER')")
     public ResponseEntity<QuizAttempt> attemptQuiz(@PathVariable Long quizId, @RequestBody Integer score) throws DataNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
@@ -37,6 +39,7 @@ public class QuizAttemptController {
     }
 
     @GetMapping("/user/{userId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_CUSTOMER')")
     public ResponseEntity<List<QuizAttempt>> getAttemptsByUser(@PathVariable Long userId) {
         List<QuizAttempt> attempts = quizAttemptService.getAttemptsByUserId(userId);
         return ResponseEntity.ok(attempts);
