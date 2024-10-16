@@ -214,6 +214,12 @@ public class CourseController {
         }
     }
 
+    @PostMapping("/enroll/{courseId}/user/{userId}")
+    public ResponseEntity<String> enrollUser(@PathVariable Long courseId, @PathVariable Long userId) {
+        String result = courseService.enrollUserInCourse(userId, courseId);
+        return ResponseEntity.ok(result);
+    }
+
 //    @PostMapping(value = "/create-full-course", consumes = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
 //    public ResponseEntity<ResponseObject> createFullCourse(
 //            @RequestPart("courseDTO") CreateCourseDTO createCourseDTO,

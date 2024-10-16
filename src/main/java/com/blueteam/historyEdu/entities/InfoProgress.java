@@ -26,6 +26,10 @@ public class InfoProgress {
     @Column(name = "is_viewed")
     private boolean isViewed;
 
+    @ManyToOne
+    @JoinColumn(name = "information_id", nullable = false)
+    private Information information;
+
     // Đánh dấu là đã xem
     public void markAsViewed() {
         this.isViewed = true;

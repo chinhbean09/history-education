@@ -7,15 +7,13 @@ import com.blueteam.historyEdu.dtos.quiz.QuizResultDTO;
 import com.blueteam.historyEdu.dtos.quiz.UpdateQuizDTO;
 import com.blueteam.historyEdu.entities.*;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
-import com.blueteam.historyEdu.repositories.IChapterRepository;
-import com.blueteam.historyEdu.repositories.ILessonRepository;
-import com.blueteam.historyEdu.repositories.IQuizAttemptRepository;
-import com.blueteam.historyEdu.repositories.IQuizRepository;
+import com.blueteam.historyEdu.repositories.*;
 import com.blueteam.historyEdu.responses.QuizResponse;
 import com.blueteam.historyEdu.services.question.IQuestionService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,6 +29,8 @@ public class QuizService implements IQuizService  {
     private final ILessonRepository lessonRepository;
     private final IQuizAttemptRepository quizAttemptRepository;
     private final IQuestionService questionService;
+    private final ProgressRepository progressRepository;
+    private final QuizProgressRepository quizProgressRepository;
 
     @Override
     public List<Quiz> getAllQuizzes() {
@@ -42,6 +42,7 @@ public class QuizService implements IQuizService  {
                 .orElseThrow(() -> new DataNotFoundException("Quiz not found with id " + id)));
     }
     @Override
+    @Transactional
     public Quiz createQuiz(QuizDTO quizDTO) {
         Lesson lesson = lessonRepository.findById(quizDTO.getLessonId())
                 .orElseThrow(() -> new EntityNotFoundException("Lesson not found"));
@@ -59,12 +60,29 @@ public class QuizService implements IQuizService  {
             question.setText(questionDTO.getText());
             question.setCorrectAnswer(questionDTO.getCorrectAnswer());
             question.setAnswers(questionDTO.getAnswers());
-            question.setQuiz(quiz); // Set the quiz reference
+            question.setQuiz(quiz);
             questions.add(question);
         }
-        quiz.setQuestions(questions); // Add questions to the quiz
+        quiz.setQuestions(questions);
 
-        return quizRepository.save(quiz);
+        Quiz savedQuiz = quizRepository.save(quiz);
+
+        // Update enrolled users' progress for the new quiz
+        updateUserProgressForNewQuiz(lesson.getChapter().getCourse(), savedQuiz);
+
+        return savedQuiz;
+    }
+
+    private void updateUserProgressForNewQuiz(Course course, Quiz quiz) {
+        List<Progress> enrolledUsersProgress = progressRepository.findByCourse(course);
+        for (Progress progress : enrolledUsersProgress) {
+            QuizProgress quizProgress = QuizProgress.builder()
+                    .quiz(quiz)
+                    .progress(progress)
+                    .isCompleted(false)
+                    .build();
+            quizProgressRepository.save(quizProgress);
+        }
     }
 
 

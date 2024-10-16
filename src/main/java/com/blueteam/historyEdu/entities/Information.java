@@ -4,6 +4,9 @@ import com.blueteam.historyEdu.entities.common.ItemWithStt;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "informations")
 @Data
@@ -30,6 +33,9 @@ public class Information implements ItemWithStt {
     @ManyToOne
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
+
+    @OneToMany(mappedBy="information", cascade=CascadeType.ALL, orphanRemoval=true)
+    private List<InfoProgress> infoProgresses = new ArrayList<>();
 
     @Override
     public void setStt(int stt) {

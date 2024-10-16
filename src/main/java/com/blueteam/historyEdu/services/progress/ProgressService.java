@@ -8,6 +8,7 @@ import com.blueteam.historyEdu.entities.*;
 import com.blueteam.historyEdu.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,11 +28,14 @@ public class ProgressService implements IProgressService{
 
     private final InfoProgressRepository infoProgressRepository;
 
+    private final IQuizRepository quizRepository;
+
     public List<ProgressDTO> getProgressByUserAndCourse(Long userId, Long courseId) {
         List<Progress> progressList = progressRepository.findByUserIdAndCourseId(userId, courseId);
         return progressList.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
+    @Transactional
     public void updateProgress(Long userId, Long chapterId, ProgressDTO progressDTO) {
         Optional<User> userOptional = userRepository.findById(userId);
 
@@ -70,7 +74,7 @@ public class ProgressService implements IProgressService{
 
         List<QuizProgressDTO> quizProgressDTOs = progress.getQuizProgresses().stream().map(quizProgress -> {
             QuizProgressDTO quizDTO = new QuizProgressDTO();
-            quizDTO.setQuizId(quizProgress.getQuizId());
+            quizDTO.setQuizId(quizProgress.getQuiz().getId());
             quizDTO.setCompleted(quizProgress.isCompleted());
             return quizDTO;
         }).collect(Collectors.toList());
@@ -113,9 +117,12 @@ public class ProgressService implements IProgressService{
         for (QuizProgressDTO quizDTO : progressDTO.getQuizProgresses()) {
             QuizProgress quizProgress = quizProgressRepository.findByProgressAndQuizId(progress, quizDTO.getQuizId());
             if (quizProgress == null) {
+                Long quiz = quizDTO.getQuizId();
+                Optional<Quiz> quiz1 = quizRepository.findById(quiz);
+
                 quizProgress = new QuizProgress();
                 quizProgress.setProgress(progress);
-                quizProgress.setQuizId(quizDTO.getQuizId());
+                quizProgress.setQuiz(quiz1.get());
             }
             quizProgress.setCompleted(quizDTO.isCompleted());
             quizProgressRepository.save(quizProgress);
@@ -129,6 +136,23 @@ public class ProgressService implements IProgressService{
             }
             infoProgress.setViewed(infoDTO.isViewed());
             infoProgressRepository.save(infoProgress);
+        }
+
+        // Check if all videos are completed, all quizzes are completed, and all info is viewed
+        boolean allVideosCompleted = progress.getVideoProgresses().stream()
+                .allMatch(VideoProgress::isCompleted);
+
+        boolean allQuizzesCompleted = progress.getQuizProgresses().stream()
+                .allMatch(QuizProgress::isCompleted);
+
+        boolean allInfoViewed = progress.getInfoProgresses().stream()
+                .allMatch(InfoProgress::isViewed);
+
+        // If all are true, set chapterCompleted to true
+        if (allVideosCompleted && allQuizzesCompleted && allInfoViewed) {
+            progress.setChapterCompleted(true);
+        } else {
+            progress.setChapterCompleted(false); // Optionally reset if not all are complete
         }
     }
 
