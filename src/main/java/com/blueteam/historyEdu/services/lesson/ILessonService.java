@@ -4,7 +4,7 @@ import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 
 public interface ILessonService {
 
-    void udeleteQuizAndUpdateStt(Long lessonId, Long quizId) throws DataNotFoundException;
+     void deleteQuizAndUpdateStt(Long lessonId, Long quizId) throws DataNotFoundException;
 
     void deleteVideoAndUpdateStt(Long lessonId, Long videoId) throws DataNotFoundException;
 

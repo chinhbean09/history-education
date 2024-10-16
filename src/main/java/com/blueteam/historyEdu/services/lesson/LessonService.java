@@ -25,6 +25,7 @@ public class LessonService implements ILessonService {
     private final IVideoRepository videoRepository;
     private final IInformationRepository informationRepository;
     private final IQuizAttemptRepository quizAttemptRepository;
+
     @Override
     @Transactional
     public void deleteQuizAndUpdateStt(Long lessonId, Long quizId) throws DataNotFoundException {
