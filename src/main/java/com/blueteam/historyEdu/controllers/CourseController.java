@@ -192,34 +192,10 @@ public class CourseController {
         }
     }
 
-//    @PostMapping("/create-full-course")
-//    public ResponseEntity<ResponseObject> createFullCourse(@RequestBody CreateCourseDTO createCourseDTO) {
-//        try {
-//            CourseResponse courseResponse = courseService.createFullCourse(createCourseDTO);
-//            return ResponseEntity.status(HttpStatus.OK).body(
-//                    ResponseObject.builder()
-//                            .data(courseResponse)
-//                            .message(MessageKeys.COURSE_CREATED_SUCCESSFULLY)
-//                            .status(HttpStatus.OK)
-//                            .build()
-//            );
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-//                    ResponseObject.builder()
-//                            .data(null)
-//                            .message(e.getMessage())
-//                            .status(HttpStatus.BAD_REQUEST)
-//                            .build()
-//            );
-//        }
-//    }
-
-    @PostMapping(value = "/create-full-course", consumes = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
-    public ResponseEntity<ResponseObject> createFullCourse(
-            @RequestPart("courseDTO") CreateCourseDTO createCourseDTO,
-            @RequestPart(value = "image", required = false) MultipartFile image) {
+    @PostMapping("/create-full-course")
+    public ResponseEntity<ResponseObject> createFullCourse(@RequestBody CreateCourseDTO createCourseDTO) {
         try {
-            CourseResponse courseResponse = courseService.createFullCourse(createCourseDTO, image);
+            CourseResponse courseResponse = courseService.createFullCourse(createCourseDTO);
             return ResponseEntity.status(HttpStatus.OK).body(
                     ResponseObject.builder()
                             .data(courseResponse)
@@ -237,4 +213,28 @@ public class CourseController {
             );
         }
     }
+
+//    @PostMapping(value = "/create-full-course", consumes = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
+//    public ResponseEntity<ResponseObject> createFullCourse(
+//            @RequestPart("courseDTO") CreateCourseDTO createCourseDTO,
+//            @RequestPart(value = "image", required = false) MultipartFile image) {
+//        try {
+//            CourseResponse courseResponse = courseService.createFullCourse(createCourseDTO, image);
+//            return ResponseEntity.status(HttpStatus.OK).body(
+//                    ResponseObject.builder()
+//                            .data(courseResponse)
+//                            .message(MessageKeys.COURSE_CREATED_SUCCESSFULLY)
+//                            .status(HttpStatus.OK)
+//                            .build()
+//            );
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+//                    ResponseObject.builder()
+//                            .data(null)
+//                            .message(e.getMessage())
+//                            .status(HttpStatus.BAD_REQUEST)
+//                            .build()
+//            );
+//        }
+//    }
 }

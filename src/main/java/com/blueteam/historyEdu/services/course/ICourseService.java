@@ -35,8 +35,8 @@ public interface ICourseService {
 
     Course uploadCourseImage(Long courseId, MultipartFile image) throws DataNotFoundException;
 
-    //CourseResponse createFullCourse(CreateCourseDTO createCourseDTO) throws DataNotFoundException, PermissionDenyException;
+    CourseResponse createFullCourse(CreateCourseDTO createCourseDTO) throws DataNotFoundException, PermissionDenyException;
 
-    CourseResponse createFullCourse(CreateCourseDTO createCourseDTO, MultipartFile image) throws DataNotFoundException, PermissionDenyException, IOException;
+    //CourseResponse createFullCourse(CreateCourseDTO createCourseDTO, MultipartFile image) throws DataNotFoundException, PermissionDenyException, IOException;
 
 }
