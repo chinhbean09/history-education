@@ -6,10 +6,7 @@ import com.blueteam.historyEdu.entities.Quiz;
 import com.blueteam.historyEdu.entities.Video;
 import com.blueteam.historyEdu.entities.common.ItemWithStt;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
-import com.blueteam.historyEdu.repositories.IInformationRepository;
-import com.blueteam.historyEdu.repositories.ILessonRepository;
-import com.blueteam.historyEdu.repositories.IQuizRepository;
-import com.blueteam.historyEdu.repositories.IVideoRepository;
+import com.blueteam.historyEdu.repositories.*;
 import com.blueteam.historyEdu.utils.MessageKeys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +24,7 @@ public class LessonService implements ILessonService {
     private final IQuizRepository quizRepository;
     private final IVideoRepository videoRepository;
     private final IInformationRepository informationRepository;
-
+    private final IQuizAttemptRepository quizAttemptRepository;
     @Override
     @Transactional
     public void deleteQuizAndUpdateStt(Long lessonId, Long quizId) throws DataNotFoundException {
@@ -36,36 +33,35 @@ public class LessonService implements ILessonService {
 
         if (quiz.isPresent()) {
             Quiz quizEntity = quiz.get();
+
+            // Xóa tất cả các quiz attempts liên quan đến quiz này
+            quizAttemptRepository.deleteAllByQuizId(quizId);
+
+            // Xóa quiz
             Lesson lesson = quizEntity.getLesson();
             lesson.getQuizzes().remove(quizEntity);
             quizRepository.delete(quizEntity);
             quizRepository.flush();
             System.out.println("Quiz deleted: " + quizEntity.getId());
 
+            List<Video> videos = videoRepository.findAllByLessonIdOrderBySttAsc(lessonId);
+            List<Information> infos = informationRepository.findAllByLessonIdOrderBySttAsc(lessonId);
+            List<Quiz> quizzes = quizRepository.findAllByLessonIdOrderBySttAsc(lessonId);
 
+            List<ItemWithStt> allItems = new ArrayList<>();
+            allItems.addAll(videos);
+            allItems.addAll(infos);
+            allItems.addAll(quizzes);
 
-        // Lấy danh sách video, information, và quiz theo lessonId và sắp xếp theo stt
-        List<Video> videos = videoRepository.findAllByLessonIdOrderBySttAsc(lessonId);
-        List<Information> infos = informationRepository.findAllByLessonIdOrderBySttAsc(lessonId);
-        List<Quiz> quizzes = quizRepository.findAllByLessonIdOrderBySttAsc(lessonId);
+            for (int i = 0; i < allItems.size(); i++) {
+                allItems.get(i).setStt(i + 1); // Đặt lại stt
+            }
 
-        // Kết hợp tất cả các danh sách vào một danh sách chung
-        List<ItemWithStt> allItems = new ArrayList<>();
-        allItems.addAll(videos);
-        allItems.addAll(infos);
-        allItems.addAll(quizzes);
-
-        // Sắp xếp lại stt sau khi xóa
-        for (int i = 0; i < allItems.size(); i++) {
-            allItems.get(i).setStt(i + 1); // Đặt lại stt
-        }
-
-        // Lưu lại các thay đổi
-        videoRepository.saveAll(videos);
-        informationRepository.saveAll(infos);
-        quizRepository.saveAll(quizzes);
+            videoRepository.saveAll(videos);
+            informationRepository.saveAll(infos);
+            quizRepository.saveAll(quizzes);
         } else {
-            throw new DataNotFoundException(MessageKeys.VIDEO_NOT_FOUND);
+            throw new DataNotFoundException("Quiz not found with id " + quizId);
         }
     }
 

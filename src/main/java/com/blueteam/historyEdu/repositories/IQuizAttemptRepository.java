@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface IQuizAttemptRepository extends JpaRepository<QuizAttempt, Long> {
     List<QuizAttempt> findByUserId(Long userId); // Custom method to find attempts by user
+    void deleteAllByQuizId(Long quizId);
 
 }
