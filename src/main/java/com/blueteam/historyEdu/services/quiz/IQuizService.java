@@ -21,7 +21,7 @@ public interface IQuizService {
 
      Quiz createQuiz(QuizDTO quiz);
 
-     QuizResponse updateQuiz(Long id, UpdateQuizDTO quizDetails) throws DataNotFoundException;
+     QuizResponse updateQuiz(Long id, QuizDTO quizDetails) throws DataNotFoundException;
 
      void deleteQuiz(Long id) throws DataNotFoundException;
 

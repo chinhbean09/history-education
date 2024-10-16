@@ -69,15 +69,29 @@ public class QuizService implements IQuizService  {
 
 
     @Override
-    public QuizResponse updateQuiz(Long id, UpdateQuizDTO quizDetails) throws DataNotFoundException {
+    public QuizResponse updateQuiz(Long id, QuizDTO quizDetails) throws DataNotFoundException {
         Quiz quiz = quizRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Quiz not found with id " + id));
+
         quiz.setTitle(quizDetails.getTitle());
         quiz.setExpirationTime(quizDetails.getExpirationTime());
         quiz.setStt(quizDetails.getStt());
+        quiz.getQuestions().clear();
+
+        List<Question> questions = new ArrayList<>();
+        for (QuestionDTO questionDTO : quizDetails.getQuestions()) {
+            Question question = new Question();
+            question.setText(questionDTO.getText());
+            question.setCorrectAnswer(questionDTO.getCorrectAnswer());
+            question.setAnswers(questionDTO.getAnswers());
+            question.setQuiz(quiz);
+        }
+
+        quiz.setQuestions(questions);
         quizRepository.save(quiz);
         return QuizResponse.fromQuiz(quiz);
     }
+
     @Override
     public void deleteQuiz(Long id) throws DataNotFoundException {
         Quiz quiz = quizRepository.findById(id)
