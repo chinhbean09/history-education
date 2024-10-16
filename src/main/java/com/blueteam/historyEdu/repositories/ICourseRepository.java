@@ -2,6 +2,7 @@ package com.blueteam.historyEdu.repositories;
 
 import com.blueteam.historyEdu.entities.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,4 +17,8 @@ public interface ICourseRepository extends JpaRepository<Course, Long> {
     List<Course> findAllByPriceEquals(int i);
 
     Optional<Course> findById(Long id);
+
+    // query that help search course by name
+    @Query("SELECT c FROM Course c WHERE c.courseName LIKE %?1%")
+    List<Course> findAllByCourseNameContaining(String courseName);
 }
