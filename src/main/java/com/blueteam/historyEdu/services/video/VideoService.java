@@ -4,10 +4,7 @@ import com.blueteam.historyEdu.dtos.VideoDTO;
 import com.blueteam.historyEdu.entities.*;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
-import com.blueteam.historyEdu.repositories.IChapterRepository;
-import com.blueteam.historyEdu.repositories.ICourseRepository;
-import com.blueteam.historyEdu.repositories.ILessonRepository;
-import com.blueteam.historyEdu.repositories.IVideoRepository;
+import com.blueteam.historyEdu.repositories.*;
 import com.blueteam.historyEdu.responses.CourseResponse;
 import com.blueteam.historyEdu.responses.VideoResponse;
 import com.blueteam.historyEdu.utils.MessageKeys;
@@ -17,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,6 +25,8 @@ public class VideoService implements IVideoService {
     private final IChapterRepository chapterRepository;
     private final ILessonRepository lessonRepository;
     private final ICourseRepository courseRepository;
+    private final ProgressRepository progressRepository;
+    private final VideoProgressRepository videoProgressRepository;
 
     @Override
     @Transactional
@@ -62,10 +62,36 @@ public class VideoService implements IVideoService {
             course.setTotalDuration(totalDuration);
             courseRepository.save(course);
 
+            // Update enrolled users' progress
+            updateUserProgressForNewVideo(course, video);
+
             // Return the updated course response
             return CourseResponse.fromCourse(course);
         } else {
             throw new PermissionDenyException(MessageKeys.PERMISSION_DENIED);
+        }
+    }
+
+    private void updateUserProgressForNewVideo(Course course, Video video) {
+        // Fetch all users enrolled in this course
+        List<Progress> enrolledUsersProgress = progressRepository.findByCourse(course);
+
+        // Iterate through each user's progress and add a new VideoProgress for the new video
+        for (Progress progress : enrolledUsersProgress) {
+            Optional<VideoProgress> videoProgressOptional = videoProgressRepository.findByProgressAndVideo(progress, video);
+            if (videoProgressOptional.isEmpty()) {
+                // Create a new VideoProgress entry for the new video
+                VideoProgress videoProgress = VideoProgress.builder()
+                        .video(video)
+                        .progress(progress)
+                        .watchedDuration(0.0) // Initial watched duration
+                        .duration(Double.valueOf(video.getDuration())) // Video duration
+                        .isCompleted(false)
+                        .build();
+
+                // Save the new VideoProgress entry
+                videoProgressRepository.save(videoProgress);
+            }
         }
     }
 

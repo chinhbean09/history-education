@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class QuizProgressDTO {
-    private String quizId;
+    private Long quizId;
     private boolean isCompleted;
 }

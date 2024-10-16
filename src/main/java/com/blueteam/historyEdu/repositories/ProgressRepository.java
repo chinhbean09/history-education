@@ -1,10 +1,14 @@
 package com.blueteam.historyEdu.repositories;
 
+import com.blueteam.historyEdu.entities.Course;
 import com.blueteam.historyEdu.entities.Progress;
+import com.blueteam.historyEdu.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface ProgressRepository extends JpaRepository<Progress, Long> {
 
@@ -13,4 +17,8 @@ public interface ProgressRepository extends JpaRepository<Progress, Long> {
 
     //  tiến trình của một người dùng trong một chương học cụ thể
     Progress findByUserIdAndChapterId(Long userId, Long chapterId);
+
+    Optional<Progress> findByUserAndCourse(User user, Course course);
+
+    List<Progress> findByCourse(Course course);
 }

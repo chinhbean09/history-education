@@ -3,16 +3,11 @@ package com.blueteam.historyEdu.services.course;
 import com.blueteam.historyEdu.dtos.ChapterDTO;
 import com.blueteam.historyEdu.dtos.CourseDTO;
 import com.blueteam.historyEdu.dtos.CreateCourseDTO;
-import com.blueteam.historyEdu.entities.Chapter;
-import com.blueteam.historyEdu.entities.Course;
-import com.blueteam.historyEdu.entities.Lesson;
-import com.blueteam.historyEdu.entities.User;
+import com.blueteam.historyEdu.entities.*;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.InvalidParamException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
-import com.blueteam.historyEdu.repositories.IChapterRepository;
-import com.blueteam.historyEdu.repositories.ICourseRepository;
-import com.blueteam.historyEdu.repositories.ILessonRepository;
+import com.blueteam.historyEdu.repositories.*;
 import com.blueteam.historyEdu.responses.CourseResponse;
 import com.blueteam.historyEdu.responses.GetAllCourseResponse;
 import com.blueteam.historyEdu.utils.MessageKeys;
@@ -30,10 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,6 +36,11 @@ public class CourseService implements ICourseService {
     private final IChapterRepository chapterRepository;
     private final ILessonRepository lessonRepository;
     private final Cloudinary cloudinary;
+    private final ProgressRepository progressRepository;
+    private final IUserRepository userRepository;
+    private final InfoProgressRepository infoProgressRepository;
+    private final VideoProgressRepository videoProgressRepository;
+    private final QuizProgressRepository quizProgressRepository;
 
     @Override
     public CourseResponse createCourse(CourseDTO courseDTO) throws DataNotFoundException, PermissionDenyException {
@@ -234,6 +231,80 @@ public class CourseService implements ICourseService {
         } else {
             throw new PermissionDenyException(MessageKeys.PERMISSION_DENIED);
         }
+    }
+
+    @Override
+    @Transactional
+    public String enrollUserInCourse(Long userId, Long courseId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<Course> courseOptional = courseRepository.findById(courseId);
+
+        if (userOptional.isEmpty() || courseOptional.isEmpty()) {
+            return "User or Course not found";
+        }
+
+        User user = userOptional.get();
+        Course course = courseOptional.get();
+
+        // Check if the user is already enrolled in the course
+        Optional<Progress> existingProgress = progressRepository.findByUserAndCourse(user, course);
+        if (existingProgress.isPresent()) {
+            return "User is already enrolled in this course.";
+        }
+
+        // Get the first chapter of the course to initialize progress
+        Chapter firstChapter = course.getChapters().isEmpty() ? null : course.getChapters().get(0);
+
+        // Create a new Progress entry
+        Progress progress = Progress.builder()
+                .user(user)
+                .course(course)
+                .chapterId(firstChapter != null ? firstChapter.getId() : null)
+                .isChapterCompleted(false)
+                .updatedAt(new Date())
+                .build();
+
+        progressRepository.save(progress);
+
+        // Loop through the course chapters to create InfoProgress, QuizProgress, and VideoProgress
+        for (Chapter chapter : course.getChapters()) {
+            for (Lesson lesson : chapter.getLessons()) {
+                // Create VideoProgress for each video
+                for (Video video : lesson.getVideos()) {
+                    VideoProgress videoProgress = VideoProgress.builder()
+                            .video(video)
+                            .progress(progress)  // Link to progress
+                            .watchedDuration(0.0) // Initial watched duration
+                            .duration(Double.valueOf(video.getDuration())) // Video duration
+                            .isCompleted(false)
+                            .build();
+                    videoProgressRepository.save(videoProgress);
+                }
+
+                // Create InfoProgress for each information
+                for (Information info : lesson.getInformations()) {
+                    InfoProgress infoProgress = InfoProgress.builder()
+                            .information(info)
+                            .infoId(String.valueOf(info.getId()))
+                            .progress(progress)  // Link to progress
+                            .isViewed(false)
+                            .build();
+                    infoProgressRepository.save(infoProgress);
+                }
+
+                // Create QuizProgress for each quiz
+                for (Quiz quiz : lesson.getQuizzes()) {
+                    QuizProgress quizProgress = QuizProgress.builder()
+                            .quiz(quiz)
+                            .progress(progress)  // Link to progress
+                            .isCompleted(false)
+                            .build();
+                    quizProgressRepository.save(quizProgress);
+                }
+            }
+        }
+
+        return "User enrolled in course successfully!";
     }
 
 //    @Override

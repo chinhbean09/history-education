@@ -26,6 +26,8 @@ public class QuizService implements IQuizService  {
     private final ILessonRepository lessonRepository;
     private final IQuizAttemptRepository quizAttemptRepository;
     private final IQuestionService questionService;
+    private final ProgressRepository progressRepository;
+    private final QuizProgressRepository quizProgressRepository;
     private final IQuestionRepository questionRepository;
 
     @Override
@@ -38,6 +40,7 @@ public class QuizService implements IQuizService  {
                 .orElseThrow(() -> new DataNotFoundException("Quiz not found with id " + id)));
     }
     @Override
+    @Transactional
     public Quiz createQuiz(QuizDTO quizDTO) {
         Lesson lesson = lessonRepository.findById(quizDTO.getLessonId())
                 .orElseThrow(() -> new EntityNotFoundException("Lesson not found"));
@@ -59,7 +62,24 @@ public class QuizService implements IQuizService  {
         }
         quiz.setQuestions(questions);
 
-        return quizRepository.save(quiz);
+        Quiz savedQuiz = quizRepository.save(quiz);
+
+        // Update enrolled users' progress for the new quiz
+        updateUserProgressForNewQuiz(lesson.getChapter().getCourse(), savedQuiz);
+
+        return savedQuiz;
+    }
+
+    private void updateUserProgressForNewQuiz(Course course, Quiz quiz) {
+        List<Progress> enrolledUsersProgress = progressRepository.findByCourse(course);
+        for (Progress progress : enrolledUsersProgress) {
+            QuizProgress quizProgress = QuizProgress.builder()
+                    .quiz(quiz)
+                    .progress(progress)
+                    .isCompleted(false)
+                    .build();
+            quizProgressRepository.save(quizProgress);
+        }
     }
 
     @Override
