@@ -214,7 +214,7 @@ public class CourseController {
 //        }
 //    }
 
-    @PostMapping(value = "/create-full-course", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/create-full-course", consumes = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
     public ResponseEntity<ResponseObject> createFullCourse(
             @RequestPart("courseDTO") CreateCourseDTO createCourseDTO,
             @RequestPart(value = "image", required = false) MultipartFile image) {
