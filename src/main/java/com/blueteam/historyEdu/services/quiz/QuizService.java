@@ -7,21 +7,16 @@ import com.blueteam.historyEdu.dtos.quiz.QuizResultDTO;
 import com.blueteam.historyEdu.dtos.quiz.UpdateQuizDTO;
 import com.blueteam.historyEdu.entities.*;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
-import com.blueteam.historyEdu.repositories.IChapterRepository;
-import com.blueteam.historyEdu.repositories.ILessonRepository;
-import com.blueteam.historyEdu.repositories.IQuizAttemptRepository;
-import com.blueteam.historyEdu.repositories.IQuizRepository;
+import com.blueteam.historyEdu.repositories.*;
 import com.blueteam.historyEdu.responses.QuizResponse;
 import com.blueteam.historyEdu.services.question.IQuestionService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +26,7 @@ public class QuizService implements IQuizService  {
     private final ILessonRepository lessonRepository;
     private final IQuizAttemptRepository quizAttemptRepository;
     private final IQuestionService questionService;
+    private final IQuestionRepository questionRepository;
 
     @Override
     public List<Quiz> getAllQuizzes() {
@@ -52,23 +48,22 @@ public class QuizService implements IQuizService  {
         quiz.setStt(quizDTO.getStt());
         quiz.setLesson(lesson);
 
-        // Create Questions from DTO
         List<Question> questions = new ArrayList<>();
         for (QuestionDTO questionDTO : quizDTO.getQuestions()) {
             Question question = new Question();
             question.setText(questionDTO.getText());
             question.setCorrectAnswer(questionDTO.getCorrectAnswer());
             question.setAnswers(questionDTO.getAnswers());
-            question.setQuiz(quiz); // Set the quiz reference
+            question.setQuiz(quiz);
             questions.add(question);
         }
-        quiz.setQuestions(questions); // Add questions to the quiz
+        quiz.setQuestions(questions);
 
         return quizRepository.save(quiz);
     }
 
-
     @Override
+    @Transactional
     public QuizResponse updateQuiz(Long id, QuizDTO quizDetails) throws DataNotFoundException {
         Quiz quiz = quizRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Quiz not found with id " + id));
@@ -76,21 +71,43 @@ public class QuizService implements IQuizService  {
         quiz.setTitle(quizDetails.getTitle());
         quiz.setExpirationTime(quizDetails.getExpirationTime());
         quiz.setStt(quizDetails.getStt());
-        quiz.getQuestions().clear();
 
-        List<Question> questions = new ArrayList<>();
+// remove those not present in the DTO
+        List<Question> existingQuestions = quiz.getQuestions();
+        List<Long> newQuestionIds = quizDetails.getQuestions().stream()
+                .map(QuestionDTO::getId)
+                .filter(Objects::nonNull)
+                .toList();
+
+// no longer in the updated DTO
+        existingQuestions.removeIf(question ->
+                question.getId() != null && !newQuestionIds.contains(question.getId())
+        );
+
         for (QuestionDTO questionDTO : quizDetails.getQuestions()) {
-            Question question = new Question();
+            Question question = existingQuestions.stream()
+                    .filter(q -> q.getId() != null && q.getId().equals(questionDTO.getId()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (question == null) {
+                // New question
+                question = new Question();
+                question.setQuiz(quiz);
+                existingQuestions.add(question);
+            }
+
             question.setText(questionDTO.getText());
             question.setCorrectAnswer(questionDTO.getCorrectAnswer());
             question.setAnswers(questionDTO.getAnswers());
-            question.setQuiz(quiz);
         }
 
-        quiz.setQuestions(questions);
         quizRepository.save(quiz);
+
         return QuizResponse.fromQuiz(quiz);
+
     }
+
 
     @Override
     public void deleteQuiz(Long id) throws DataNotFoundException {
