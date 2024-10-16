@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class InfoProgressDTO {
-    private String infoId;
+    private Long infoId;
     private boolean isViewed;
 }

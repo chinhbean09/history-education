@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InfoProgressRepository extends JpaRepository<InfoProgress, Long> {
-    InfoProgress findByProgressAndInfoId(Progress progress, String infoId);
+    InfoProgress findByProgressAndInfoId(Progress progress, Long infoId);
 }
