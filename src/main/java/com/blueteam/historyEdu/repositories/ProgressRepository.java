@@ -16,7 +16,11 @@ public interface ProgressRepository extends JpaRepository<Progress, Long> {
     List<Progress> findByUserIdAndCourseId(Long userId, Long courseId);
 
     //  tiến trình của một người dùng trong một chương học cụ thể
-    Progress findByUserIdAndChapterId(Long userId, Long chapterId);
+    //Progress findByUserIdAndChapterId(Long userId, Long chapterId);
+
+    List<Progress> findByUserIdAndChapterId(Long userId, Long chapterId);
+
+    Optional<Progress> findFirstByUserIdAndChapterId(Long userId, Long chapterId);
 
     Optional<Progress> findByUserAndCourse(User user, Course course);
 

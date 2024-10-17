@@ -30,8 +30,8 @@ public class ProgressService implements IProgressService{
 
     private final IQuizRepository quizRepository;
 
-    public List<ProgressDTO> getProgressByUserAndCourse(Long userId, Long courseId) {
-        List<Progress> progressList = progressRepository.findByUserIdAndCourseId(userId, courseId);
+    public List<ProgressDTO> getProgressByUserAndChapter(Long userId, Long chapterId) {
+        List<Progress> progressList = progressRepository.findByUserIdAndChapterId(userId, chapterId);
         return progressList.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
@@ -42,7 +42,7 @@ public class ProgressService implements IProgressService{
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
-            Progress progress = progressRepository.findByUserIdAndChapterId(userId, chapterId);
+            Progress progress = progressRepository.findFirstByUserIdAndChapterId(userId, chapterId).orElse(null);
 
             if (progress == null) {
                 progress = new Progress();
