@@ -252,28 +252,26 @@ public class CourseService implements ICourseService {
             return "User is already enrolled in this course.";
         }
 
-        // Get the first chapter of the course to initialize progress
-        Chapter firstChapter = course.getChapters().isEmpty() ? null : course.getChapters().get(0);
-
-        // Create a new Progress entry
-        Progress progress = Progress.builder()
-                .user(user)
-                .course(course)
-                .chapterId(firstChapter != null ? firstChapter.getId() : null)
-                .isChapterCompleted(false)
-                .updatedAt(new Date())
-                .build();
-
-        progressRepository.save(progress);
-
-        // Loop through the course chapters to create InfoProgress, QuizProgress, and VideoProgress
+        // Loop through all chapters in the course
         for (Chapter chapter : course.getChapters()) {
+            // Create a new Progress entry for each chapter
+            Progress progress = Progress.builder()
+                    .user(user)
+                    .course(course)
+                    .chapterId(chapter.getId()) // Set the current chapter ID
+                    .isChapterCompleted(false)
+                    .updatedAt(new Date())
+                    .build();
+
+            progressRepository.save(progress);
+
+            // Loop through the lessons in the chapter
             for (Lesson lesson : chapter.getLessons()) {
-                // Create VideoProgress for each video
+                // Create VideoProgress for each video in the lesson
                 for (Video video : lesson.getVideos()) {
                     VideoProgress videoProgress = VideoProgress.builder()
                             .video(video)
-                            .progress(progress)  // Link to progress
+                            .progress(progress)  // Link to progress for the current chapter
                             .watchedDuration(0.0) // Initial watched duration
                             .duration(Double.valueOf(video.getDuration())) // Video duration
                             .isCompleted(false)
@@ -281,22 +279,22 @@ public class CourseService implements ICourseService {
                     videoProgressRepository.save(videoProgress);
                 }
 
-                // Create InfoProgress for each information
+                // Create InfoProgress for each information in the lesson
                 for (Information info : lesson.getInformations()) {
                     InfoProgress infoProgress = InfoProgress.builder()
                             .information(info)
                             .infoId(info.getId())
-                            .progress(progress)  // Link to progress
+                            .progress(progress)  // Link to progress for the current chapter
                             .isViewed(false)
                             .build();
                     infoProgressRepository.save(infoProgress);
                 }
 
-                // Create QuizProgress for each quiz
+                // Create QuizProgress for each quiz in the lesson
                 for (Quiz quiz : lesson.getQuizzes()) {
                     QuizProgress quizProgress = QuizProgress.builder()
                             .quiz(quiz)
-                            .progress(progress)  // Link to progress
+                            .progress(progress)  // Link to progress for the current chapter
                             .isCompleted(false)
                             .build();
                     quizProgressRepository.save(quizProgress);
@@ -305,6 +303,43 @@ public class CourseService implements ICourseService {
         }
 
         return "User enrolled in course successfully!";
+    }
+
+
+    @Override
+    public String uploadImage(MultipartFile image) throws IOException {
+        if (image != null && !image.isEmpty()) {
+            try {
+                // Check if the uploaded file is an image
+                MediaType mediaType = MediaType.parseMediaType(Objects.requireNonNull(image.getContentType()));
+                if (!mediaType.isCompatibleWith(MediaType.IMAGE_JPEG) &&
+                        !mediaType.isCompatibleWith(MediaType.IMAGE_PNG)) {
+                    throw new InvalidParamException(MessageKeys.UPLOAD_IMAGES_FILE_MUST_BE_IMAGE);
+                }
+
+                // Upload the image to Cloudinary
+                Map uploadResult = cloudinary.uploader().upload(image.getBytes(),
+                        ObjectUtils.asMap("folder", "course_image/" + UUID.randomUUID(), "public_id", image.getOriginalFilename()));
+
+                // Get the URL of the uploaded image
+                return uploadResult.get("secure_url").toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<GetAllCourseResponse> searchCourseByName(String name) {
+        if (name != null) {
+            return courseRepository
+                    .findAllByCourseNameContaining(name)
+                    .stream()
+                    .map(GetAllCourseResponse::fromCourse)
+                    .collect(Collectors.toList());
+        }
+        return null;
     }
 
 //    @Override
