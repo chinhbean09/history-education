@@ -59,7 +59,7 @@ public class OrderController {
                 response.put("error", -1);
                 response.put("message", "Payment not completed or failed.");
                 response.set("data", null);
-                return new RedirectView("http://localhost:3000/fail");
+                return new RedirectView("http://blueedu.info.vn/fail");
             }
 
             LocalDate now = LocalDate.now();
@@ -70,6 +70,7 @@ public class OrderController {
                 Purchase purchase = Purchase.builder()
                         .servicePackage(servicePackage)
                         .user(user)
+                        .price(servicePackage.getPrice())
                         .orderCode(order.getOrderCode())
                         .packageStatus(PackageStatus.PAID)
                         .purchaseDate(now.atStartOfDay())
@@ -85,14 +86,14 @@ public class OrderController {
             response.put("error", 0);
             response.put("message", "Package successfully purchased.");
             response.set("data", null);
-            return new RedirectView("http://localhost:3000/success");
+            return new RedirectView("http://blueedu.info.vn/success");
 
         } catch (Exception e) {
             e.printStackTrace();
             response.put("error", -1);
             response.put("message", e.getMessage());
             response.set("data", null);
-            return new RedirectView("http://localhost:3000/fail");
+            return new RedirectView("http://blueedu.info.vn/fail");
         }
     }
 
@@ -135,6 +136,7 @@ public class OrderController {
                     .servicePackage(servicePackage)
                     .user(user)
                     .orderCode(order.getOrderCode())
+                    .price(servicePackage.getPrice())
                     .packageStatus(PackageStatus.CANCELLED)
                     .purchaseDate(now.atStartOfDay())
                     .expiryDate(expiryDate.atStartOfDay())
@@ -149,7 +151,7 @@ public class OrderController {
 
             userRepository.save(user);
         }
-        return new RedirectView("http://localhost:3000/fail");
+        return new RedirectView("http://blueedu.info.vn/fail");
     }
 
     @PostMapping(path = "/create")

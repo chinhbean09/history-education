@@ -15,13 +15,5 @@ public interface IPackageService {
 
     void deletePackage(Long id);
 
-    ServicePackage registerPackage(Long packageId);
 
-    boolean checkAndHandlePackageExpiration();
-
-    void sendMailNotificationForPackagePayment(ServicePackage servicePackage, String email);
-
-    ServicePackage findPackageWithPaymentTransactionById(Long packageId);
-
-    void updatePackageStatus(Long userId, PackageStatus newStatus) throws PermissionDenyException;
 }

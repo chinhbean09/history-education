@@ -72,18 +72,19 @@ public class QuizService implements IQuizService  {
         quiz.setExpirationTime(quizDetails.getExpirationTime());
         quiz.setStt(quizDetails.getStt());
 
-// remove those not present in the DTO
+// Manage the existing questions: remove those not present in the DTO
         List<Question> existingQuestions = quiz.getQuestions();
         List<Long> newQuestionIds = quizDetails.getQuestions().stream()
                 .map(QuestionDTO::getId)
-                .filter(Objects::nonNull)
+                .filter(Objects::nonNull) // Filter out null IDs (new questions)
                 .toList();
 
-// no longer in the updated DTO
+// Remove questions that are no longer in the updated DTO
         existingQuestions.removeIf(question ->
                 question.getId() != null && !newQuestionIds.contains(question.getId())
         );
 
+// Update existing questions or add new ones
         for (QuestionDTO questionDTO : quizDetails.getQuestions()) {
             Question question = existingQuestions.stream()
                     .filter(q -> q.getId() != null && q.getId().equals(questionDTO.getId()))
@@ -102,6 +103,7 @@ public class QuizService implements IQuizService  {
             question.setAnswers(questionDTO.getAnswers());
         }
 
+// Save the quiz
         quizRepository.save(quiz);
 
         return QuizResponse.fromQuiz(quiz);

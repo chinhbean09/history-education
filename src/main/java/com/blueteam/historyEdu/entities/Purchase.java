@@ -1,6 +1,7 @@
 package com.blueteam.historyEdu.entities;
 
 import com.blueteam.historyEdu.enums.PackageStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -41,4 +42,8 @@ public class Purchase {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private PackageStatus packageStatus;
+
+    @Column(name = "price", nullable = false)
+    private Double price;
+
 }
