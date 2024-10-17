@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class VideoProgressDTO {
     private Long videoId;
+    private String videoName;
     private Double watchedDuration;
     private Double duration;
     private boolean isCompleted;

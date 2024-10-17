@@ -65,6 +65,7 @@ public class ProgressService implements IProgressService{
         List<VideoProgressDTO> videoProgressDTOs = progress.getVideoProgresses().stream().map(videoProgress -> {
             VideoProgressDTO videoDTO = new VideoProgressDTO();
             videoDTO.setVideoId(videoProgress.getVideo().getId());
+            videoDTO.setVideoName(videoProgress.getVideo().getVideoName());  // Thêm videoName vào DTO
             videoDTO.setWatchedDuration(videoProgress.getWatchedDuration());
             videoDTO.setDuration(videoProgress.getDuration());
             videoDTO.setCompleted(videoProgress.isCompleted());
@@ -75,6 +76,7 @@ public class ProgressService implements IProgressService{
         List<QuizProgressDTO> quizProgressDTOs = progress.getQuizProgresses().stream().map(quizProgress -> {
             QuizProgressDTO quizDTO = new QuizProgressDTO();
             quizDTO.setQuizId(quizProgress.getQuiz().getId());
+            quizDTO.setQuizName(quizProgress.getQuiz().getTitle()); // Thêm quizName vào DTO
             quizDTO.setCompleted(quizProgress.isCompleted());
             return quizDTO;
         }).collect(Collectors.toList());
@@ -83,6 +85,7 @@ public class ProgressService implements IProgressService{
         List<InfoProgressDTO> infoProgressDTOs = progress.getInfoProgresses().stream().map(infoProgress -> {
             InfoProgressDTO infoDTO = new InfoProgressDTO();
             infoDTO.setInfoId(infoProgress.getInfoId());
+            infoDTO.setInfoName(infoProgress.getInformation().getInfoTitle()); // Thêm infoName vào DTO
             infoDTO.setViewed(infoProgress.isViewed());
             return infoDTO;
         }).collect(Collectors.toList());
@@ -90,6 +93,7 @@ public class ProgressService implements IProgressService{
 
         return dto;
     }
+
 
     private void updateProgressFromDto(Progress progress, ProgressDTO progressDTO) {
         progress.setChapterCompleted(progressDTO.isChapterCompleted());
@@ -119,7 +123,6 @@ public class ProgressService implements IProgressService{
             if (quizProgress == null) {
                 Long quiz = quizDTO.getQuizId();
                 Optional<Quiz> quiz1 = quizRepository.findById(quiz);
-
                 quizProgress = new QuizProgress();
                 quizProgress.setProgress(progress);
                 quizProgress.setQuiz(quiz1.get());
