@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IProgressService {
 
-     List<ProgressDTO> getProgressByUserAndCourse(Long userId, Long courseId);
+     List<ProgressDTO> getProgressByUserAndChapter(Long userId, Long chapterId);
      void updateProgress(Long userId, Long chapterId, ProgressDTO progressDTO);
 
 
