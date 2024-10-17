@@ -29,4 +29,6 @@ public interface IUserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.role.id = ?1")
     List<User> findByRoleId(Long roleId);
+
+    Long countByRole_RoleName(String roleName);
 }
