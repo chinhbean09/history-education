@@ -42,6 +42,9 @@
         @JoinColumn(name = "lesson_id", nullable = false)
         private Lesson lesson;
 
+        @OneToMany(mappedBy="quiz", cascade=CascadeType.ALL, orphanRemoval=true)
+        private List<QuizProgress> quizProgresses = new ArrayList<>();
+
         @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
         private List<Question> questions = new ArrayList<>();;
 

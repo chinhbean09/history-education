@@ -21,10 +21,14 @@ public class InfoProgress {
     private Progress progress;
 
     @Column(name = "info_id", nullable = false)
-    private String infoId;
+    private Long infoId;
 
     @Column(name = "is_viewed")
     private boolean isViewed;
+
+    @ManyToOne
+    @JoinColumn(name = "information_id", nullable = false)
+    private Information information;
 
     // Đánh dấu là đã xem
     public void markAsViewed() {

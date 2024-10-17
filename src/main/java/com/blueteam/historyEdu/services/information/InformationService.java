@@ -1,13 +1,13 @@
 package com.blueteam.historyEdu.services.information;
 
 import com.blueteam.historyEdu.dtos.InformationDTO;
-import com.blueteam.historyEdu.entities.Information;
-import com.blueteam.historyEdu.entities.Lesson;
-import com.blueteam.historyEdu.entities.User;
+import com.blueteam.historyEdu.entities.*;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
 import com.blueteam.historyEdu.repositories.IInformationRepository;
 import com.blueteam.historyEdu.repositories.ILessonRepository;
+import com.blueteam.historyEdu.repositories.InfoProgressRepository;
+import com.blueteam.historyEdu.repositories.ProgressRepository;
 import com.blueteam.historyEdu.responses.CourseResponse;
 import com.blueteam.historyEdu.responses.InformationResponse;
 import com.blueteam.historyEdu.utils.MessageKeys;
@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,6 +26,8 @@ public class InformationService implements IInformationService {
 
     private final IInformationRepository informationRepository;
     private final ILessonRepository lessonRepository;
+    private final ProgressRepository progressRepository;
+    private final InfoProgressRepository infoProgressRepository;
 
     @Override
     @Transactional
@@ -34,16 +37,38 @@ public class InformationService implements IInformationService {
         User currentUser = (User) authentication.getPrincipal();
 
         if (currentUser.getRole().getRoleName().equals("ADMIN")) {
+            // Fetch the lesson
             Lesson lesson = lessonRepository.findById(lessonId)
                     .orElseThrow(() -> new DataNotFoundException(MessageKeys.LESSON_NOT_FOUND));
+
+            // Create and save the new information entity
             Information information = informationDTO.toEntity();
             information.setLesson(lesson);
             informationRepository.save(information);
+
+            // Update enrolled users' progress for the new information
+            updateUserProgressForNewInformation(lesson.getChapter().getCourse(), information);
+
+            // Return the updated course response
             return CourseResponse.fromCourse(lesson.getChapter().getCourse());
         } else {
             throw new PermissionDenyException(MessageKeys.PERMISSION_DENIED);
         }
     }
+
+    private void updateUserProgressForNewInformation(Course course, Information information) {
+        List<Progress> enrolledUsersProgress = progressRepository.findByCourse(course);
+        for (Progress progress : enrolledUsersProgress) {
+            InfoProgress infoProgress = InfoProgress.builder()
+                    .information(information)
+                    .infoId(information.getId())
+                    .progress(progress)
+                    .isViewed(false)
+                    .build();
+            infoProgressRepository.save(infoProgress);
+        }
+    }
+
 
     @Override
     @Transactional

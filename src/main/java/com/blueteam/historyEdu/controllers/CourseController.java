@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -170,26 +171,32 @@ public class CourseController {
         }
     }
 
-    @PutMapping("/update-image/{courseId}")
-    public ResponseEntity<ResponseObject> updateCourseImage(@PathVariable Long courseId, @RequestParam("image") MultipartFile image) {
-        try {
-            Course course = courseService.uploadCourseImage(courseId, image);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    ResponseObject.builder()
-                            .data(CourseResponse.fromCourse(course))
-                            .message(MessageKeys.COURSE_IMAGE_UPDATED_SUCCESSFULLY)
-                            .status(HttpStatus.OK)
-                            .build()
-            );
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    ResponseObject.builder()
-                            .data(null)
-                            .message(e.getMessage())
-                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .build()
-            );
-        }
+//    @PutMapping("/update-image/{courseId}")
+//    public ResponseEntity<ResponseObject> updateCourseImage(@PathVariable Long courseId, @RequestParam("image") MultipartFile image) {
+//        try {
+//            Course course = courseService.uploadCourseImage(courseId, image);
+//            return ResponseEntity.status(HttpStatus.OK).body(
+//                    ResponseObject.builder()
+//                            .data(CourseResponse.fromCourse(course))
+//                            .message(MessageKeys.COURSE_IMAGE_UPDATED_SUCCESSFULLY)
+//                            .status(HttpStatus.OK)
+//                            .build()
+//            );
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+//                    ResponseObject.builder()
+//                            .data(null)
+//                            .message(e.getMessage())
+//                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                            .build()
+//            );
+//        }
+//    }
+
+    @PostMapping("/update-image")
+    public ResponseEntity<String> uploadCourseImage(@RequestParam("image") MultipartFile image) throws IOException {
+        String result = courseService.uploadImage(image);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/create-full-course")
@@ -214,6 +221,17 @@ public class CourseController {
         }
     }
 
+    @PostMapping("/enroll/{courseId}/user/{userId}")
+    public ResponseEntity<String> enrollUser(@PathVariable Long courseId, @PathVariable Long userId) {
+        String result = courseService.enrollUserInCourse(userId, courseId);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/search/{courseName}")
+    public ResponseEntity<List<GetAllCourseResponse>> searchCourseByName(@PathVariable String courseName) {
+        List<GetAllCourseResponse> courseResponses = courseService.searchCourseByName(courseName);
+        return ResponseEntity.ok(courseResponses);
+    }
 //    @PostMapping(value = "/create-full-course", consumes = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
 //    public ResponseEntity<ResponseObject> createFullCourse(
 //            @RequestPart("courseDTO") CreateCourseDTO createCourseDTO,

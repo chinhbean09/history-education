@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface QuizProgressRepository extends JpaRepository<QuizProgress, Long> {
-    QuizProgress findByProgressAndQuizId(Progress progress, String quizId);
+    QuizProgress findByProgressAndQuizId(Progress progress, long quizId);
 }

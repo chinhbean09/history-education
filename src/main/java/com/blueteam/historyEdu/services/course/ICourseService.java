@@ -39,4 +39,9 @@ public interface ICourseService {
 
     //CourseResponse createFullCourse(CreateCourseDTO createCourseDTO, MultipartFile image) throws DataNotFoundException, PermissionDenyException, IOException;
 
+    String enrollUserInCourse(Long userId, Long courseId);
+
+    String uploadImage(MultipartFile image) throws IOException;
+
+    List<GetAllCourseResponse> searchCourseByName(String name);
 }

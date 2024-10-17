@@ -20,11 +20,13 @@ public class QuizProgress {
     @JoinColumn(name = "progress_id", nullable = false)
     private Progress progress;
 
-    @Column(name = "quiz_id", nullable = false)
-    private String quizId;
 
     @Column(name = "is_completed")
     private boolean isCompleted;
+
+    @ManyToOne
+    @JoinColumn(name = "quiz_id", nullable = false)
+    private Quiz quiz;
 
     // Đánh dấu hoàn thành quiz
     public void markAsCompleted() {
