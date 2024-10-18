@@ -52,14 +52,14 @@ public class ProgressService implements IProgressService{
                 progress.setChapterId(chapterId);
             }
 
-            // Fetch the course entity and set it
-            Optional<Course> courseOptional = courseRepository.findById(progressDTO.getCourseId()); // Assuming ProgressDTO has a courseId
-            if (courseOptional.isPresent()) {
-                Course course = courseOptional.get();
-                progress.setCourse(course); // Set course to progress
-            } else {
-                throw new RuntimeException("Course not found with id: " + progressDTO.getCourseId());
-            }
+//            // Fetch the course entity and set it
+//            Optional<Course> courseOptional = courseRepository.findById(progressDTO.getCourseId()); // Assuming ProgressDTO has a courseId
+//            if (courseOptional.isPresent()) {
+//                Course course = courseOptional.get();
+//                progress.setCourse(course); // Set course to progress
+//            } else {
+//                throw new RuntimeException("Course not found with id: " + progressDTO.getCourseId());
+//            }
 
             updateProgressFromDto(progress, progressDTO);
             progressRepository.save(progress);
