@@ -247,11 +247,11 @@ public class CourseService implements ICourseService {
         Course course = courseOptional.get();
 
         // Check if the user is already enrolled in the course
-        Optional<Progress> existingProgress = progressRepository.findByUserAndCourse(user, course);
-        if (existingProgress.isPresent()) {
+        try {
+            Optional<Progress> existingProgress = progressRepository.findByUserAndCourse(user, course);
+        } catch (Exception e) {
             return "User is already enrolled in this course.";
         }
-
         // Loop through all chapters in the course
         for (Chapter chapter : course.getChapters()) {
             // Create a new Progress entry for each chapter
