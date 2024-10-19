@@ -9,5 +9,6 @@ public interface IProgressService {
      List<ProgressDTO> getProgressByUserAndChapter(Long userId, Long chapterId);
      void updateProgress(Long userId, Long chapterId, ProgressDTO progressDTO);
 
+     List<ProgressDTO> getProgressByUserAndCourse(Long userId, Long courseId);
 
     }
