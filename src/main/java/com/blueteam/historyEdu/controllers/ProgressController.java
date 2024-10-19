@@ -19,7 +19,7 @@ public class ProgressController {
     //  danh sách tiến trình của người dùng theo khóa học
     @GetMapping("/user/{userId}/course/{chapterId}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_CUSTOMER')")
-    public ResponseEntity<List<ProgressDTO>> getProgressByUserAndCourse(@PathVariable Long userId, @PathVariable Long chapterId) {
+    public ResponseEntity<List<ProgressDTO>> getProgressByUserAndChapter(@PathVariable Long userId, @PathVariable Long chapterId) {
         List<ProgressDTO> progressDTOList = progressService.getProgressByUserAndChapter(userId, chapterId);
         return ResponseEntity.ok(progressDTOList);
     }
@@ -30,5 +30,12 @@ public class ProgressController {
     public ResponseEntity<Void> updateProgress(@PathVariable Long userId, @PathVariable Long chapterId, @RequestBody ProgressDTO progressDTO) {
         progressService.updateProgress(userId, chapterId, progressDTO);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/user/{userId}/course/{courseId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_CUSTOMER')")
+    public ResponseEntity<List<ProgressDTO>> getProgressByUserAndCourse(@PathVariable Long userId, @PathVariable Long courseId) {
+        List<ProgressDTO> progressDTOList = progressService.getProgressByUserAndCourse(userId, courseId);
+        return ResponseEntity.ok(progressDTOList);
     }
 }

@@ -68,6 +68,12 @@ public class ProgressService implements IProgressService{
         }
     }
 
+    @Override
+    public List<ProgressDTO> getProgressByUserAndCourse(Long userId, Long courseId) {
+        List<Progress> progressList = progressRepository.findByUserIdAndCourseId(userId, courseId);
+        return progressList.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
     private ProgressDTO convertToDto(Progress progress) {
         ProgressDTO dto = new ProgressDTO();
         dto.setChapterId(progress.getChapterId());
