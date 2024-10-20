@@ -9,6 +9,7 @@ import com.blueteam.historyEdu.dtos.user.UserLoginDTO;
 import com.blueteam.historyEdu.entities.Role;
 import com.blueteam.historyEdu.entities.Token;
 import com.blueteam.historyEdu.entities.User;
+import com.blueteam.historyEdu.enums.PackageStatus;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.InvalidParamException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
@@ -22,6 +23,7 @@ import com.blueteam.historyEdu.utils.MessageKeys;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import jakarta.mail.MessagingException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -298,4 +300,15 @@ public class UserService implements IUserService {
         }
         return null;
     }
+    @Override
+    public User updatePackageStatus(Long userId, PackageStatus status) {
+        Optional<User> userOpt = UserRepository.findById(userId);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            user.setPackageStatus(status);
+            return UserRepository.save(user);
+        }
+        throw new EntityNotFoundException("User not found with id: " + userId);
+    }
+
 }

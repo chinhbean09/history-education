@@ -4,6 +4,7 @@ import com.blueteam.historyEdu.dtos.ChangePasswordDTO;
 import com.blueteam.historyEdu.dtos.user.UserDTO;
 import com.blueteam.historyEdu.dtos.user.UserLoginDTO;
 import com.blueteam.historyEdu.entities.User;
+import com.blueteam.historyEdu.enums.PackageStatus;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.responses.User.UserResponse;
 import org.springframework.data.domain.Page;
@@ -39,5 +40,8 @@ public interface IUserService {
     List<UserResponse> getAllUsers(Long roleId);
 
     User updateUserAvatar(long id, MultipartFile avatar);
+
+
+     User updatePackageStatus(Long userId, PackageStatus status);
 
 }

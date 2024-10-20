@@ -8,6 +8,7 @@ import com.blueteam.historyEdu.dtos.user.UserDTO;
 import com.blueteam.historyEdu.dtos.user.UserLoginDTO;
 import com.blueteam.historyEdu.entities.Token;
 import com.blueteam.historyEdu.entities.User;
+import com.blueteam.historyEdu.enums.PackageStatus;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.repositories.IUserRepository;
 import com.blueteam.historyEdu.responses.ResponseObject;
@@ -18,6 +19,7 @@ import com.blueteam.historyEdu.services.token.ITokenService;
 import com.blueteam.historyEdu.services.user.IUserService;
 import com.blueteam.historyEdu.utils.MessageKeys;
 import com.blueteam.historyEdu.utils.ValidationUtils;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +62,19 @@ public class UserController {
     public ResponseEntity<?> generateSecretKey() {
         return ResponseEntity.ok(jwtTokenUtils.generateSecretKey());
     }
+
+    @PutMapping("/{userId}/package-status")
+    public ResponseEntity<String> updatePackageStatus(@PathVariable Long userId) {
+        try {
+            userService.updatePackageStatus(userId, PackageStatus.PAID);
+            return ResponseEntity.ok("Package status updated to PAID.");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating package status.");
+        }
+    }
+
 
     @PostMapping("/register")
     public ResponseEntity<ResponseObject> registerUser(
