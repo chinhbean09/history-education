@@ -4,6 +4,7 @@ import com.blueteam.historyEdu.dtos.ChapterDTO;
 import com.blueteam.historyEdu.dtos.CourseDTO;
 import com.blueteam.historyEdu.dtos.CreateCourseDTO;
 import com.blueteam.historyEdu.entities.*;
+import com.blueteam.historyEdu.enums.EnrollStatus;
 import com.blueteam.historyEdu.enums.PackageStatus;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.InvalidParamException;
@@ -240,72 +241,79 @@ public class CourseService implements ICourseService {
 
     @Override
     @Transactional
-    public String enrollUserInCourse(Long userId, Long courseId) {
+    public EnrollStatus enrollUserInCourse(Long userId, Long courseId) {
         Optional<User> userOptional = userRepository.findById(userId);
         Optional<Course> courseOptional = courseRepository.findById(courseId);
 
-        if (userOptional.isEmpty() || courseOptional.isEmpty()) {
-            return "User or Course not found";
+        // Kiểm tra người dùng và khóa học có tồn tại không
+        if (userOptional.isEmpty()) {
+            return EnrollStatus.USER_NOT_FOUND;
         }
-        if(userOptional.get().getPackageStatus() != PackageStatus.PAID){
-            return "User not paid the package";
+        if (courseOptional.isEmpty()) {
+            return EnrollStatus.COURSE_NOT_FOUND;
         }
+
         User user = userOptional.get();
         Course course = courseOptional.get();
 
-        // Check if the user is already enrolled in the course
+        // Kiểm tra trạng thái gói
+        if (user.getPackageStatus() != PackageStatus.PAID) {
+            return EnrollStatus.UNPAID; // Trả về trạng thái chưa thanh toán
+        }
+
+        // Kiểm tra xem người dùng đã đăng ký khóa học chưa
         try {
             Optional<Progress> existingProgress = progressRepository.findByUserAndCourse(user, course);
-            if(existingProgress.isPresent()){
-                return "User is already enrolled in this course.";
+            if (existingProgress.isPresent()) {
+                return EnrollStatus.ALREADY_ENROLLED; // Trả về trạng thái đã đăng ký
             }
-
         } catch (Exception e) {
-            return "User is already enrolled in this course.";
+            return EnrollStatus.ERROR; // Trả về trạng thái lỗi
         }
-        // Loop through all chapters in the course
+
+        // Vòng lặp qua tất cả các chương trong khóa học
         for (Chapter chapter : course.getChapters()) {
-            // Create a new Progress entry for each chapter
+            // Tạo một mục Progress mới cho mỗi chương
             Progress progress = Progress.builder()
                     .user(user)
                     .course(course)
-                    .chapterId(chapter.getId()) // Set the current chapter ID
+                    .chapterId(chapter.getId()) // Đặt ID chương hiện tại
                     .isChapterCompleted(false)
                     .updatedAt(new Date())
                     .build();
 
             progressRepository.save(progress);
 
-            // Loop through the lessons in the chapter
+            // Vòng lặp qua các bài học trong chương
             for (Lesson lesson : chapter.getLessons()) {
-                // Create VideoProgress for each video in the lesson
+                // Tạo VideoProgress cho mỗi video trong bài học
                 for (Video video : lesson.getVideos()) {
                     VideoProgress videoProgress = VideoProgress.builder()
                             .video(video)
-                            .progress(progress)  // Link to progress for the current chapter
-                            .watchedDuration(0.0) // Initial watched duration
-                            .duration(Double.valueOf(video.getDuration())) // Video duration
+                            .progress(progress)  // Liên kết với progress cho chương hiện tại
+                            .watchedDuration(0.0) // Thời gian xem ban đầu
+                            .duration(Double.valueOf(video.getDuration())) // Thời gian video
                             .isCompleted(false)
                             .build();
                     videoProgressRepository.save(videoProgress);
                 }
 
-                // Create InfoProgress for each information in the lesson
+                // Tạo InfoProgress cho mỗi thông tin trong bài học
                 for (Information info : lesson.getInformations()) {
                     InfoProgress infoProgress = InfoProgress.builder()
                             .information(info)
                             .infoId(info.getId())
-                            .progress(progress)  // Link to progress for the current chapter
+                            .progress(progress)  // Liên kết với progress cho chương hiện tại
                             .isViewed(false)
                             .build();
                     infoProgressRepository.save(infoProgress);
                 }
 
-                // Create QuizProgress for each quiz in the lesson
+                // Tạo QuizProgress cho mỗi bài quiz trong bài học
                 for (Quiz quiz : lesson.getQuizzes()) {
                     QuizProgress quizProgress = QuizProgress.builder()
                             .quiz(quiz)
-                            .progress(progress)  // Link to progress for the current chapter
+                            .progress(progress)  // Liên kết với progress cho chương hiện tại
                             .isCompleted(false)
                             .build();
                     quizProgressRepository.save(quizProgress);
@@ -313,8 +321,10 @@ public class CourseService implements ICourseService {
             }
         }
 
-        return "User enrolled in course successfully!";
+        return EnrollStatus.SUCCESS; // Trả về trạng thái đăng ký thành công
     }
+
+
 
 
     @Override

@@ -5,9 +5,12 @@ import com.blueteam.historyEdu.dtos.CourseDTO;
 import com.blueteam.historyEdu.dtos.CreateCourseDTO;
 import com.blueteam.historyEdu.entities.Course;
 import com.blueteam.historyEdu.entities.User;
+import com.blueteam.historyEdu.enums.EnrollStatus;
+import com.blueteam.historyEdu.enums.PackageStatus;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.repositories.IUserRepository;
 import com.blueteam.historyEdu.responses.CourseResponse;
+import com.blueteam.historyEdu.responses.EnrollResponse;
 import com.blueteam.historyEdu.responses.GetAllCourseResponse;
 import com.blueteam.historyEdu.responses.ResponseObject;
 import com.blueteam.historyEdu.services.course.ICourseService;
@@ -227,12 +230,31 @@ public class CourseController {
             );
         }
     }
-
     @PostMapping("/enroll/{courseId}/user/{userId}")
-    public ResponseEntity<String> enrollUser(@PathVariable Long courseId, @PathVariable Long userId) {
-        String result = courseService.enrollUserInCourse(userId, courseId);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<EnrollResponse> enrollUser(@PathVariable Long courseId, @PathVariable Long userId) {
+        EnrollStatus result = courseService.enrollUserInCourse(userId, courseId);
+
+        // Tạo đối tượng EnrollResponse với trạng thái
+        EnrollResponse response = new EnrollResponse(result);
+
+        switch (result) {
+            case SUCCESS:
+                return ResponseEntity.ok(response);
+            case USER_NOT_FOUND:
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            case COURSE_NOT_FOUND:
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            case UNPAID:
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            case ALREADY_ENROLLED:
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+            case ERROR:
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            default:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
+
 
     @GetMapping("/search/{courseName}")
     public ResponseEntity<List<GetAllCourseResponse>> searchCourseByName(@PathVariable String courseName) {

@@ -4,6 +4,8 @@ import com.blueteam.historyEdu.dtos.CourseDTO;
 import com.blueteam.historyEdu.dtos.CreateCourseDTO;
 import com.blueteam.historyEdu.entities.Course;
 import com.blueteam.historyEdu.entities.Quiz;
+import com.blueteam.historyEdu.enums.EnrollStatus;
+import com.blueteam.historyEdu.enums.PackageStatus;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
 import com.blueteam.historyEdu.responses.CourseResponse;
@@ -39,7 +41,7 @@ public interface ICourseService {
 
     //CourseResponse createFullCourse(CreateCourseDTO createCourseDTO, MultipartFile image) throws DataNotFoundException, PermissionDenyException, IOException;
 
-    String enrollUserInCourse(Long userId, Long courseId);
+    EnrollStatus enrollUserInCourse(Long userId, Long courseId);
 
     String uploadImage(MultipartFile image) throws IOException;
 
