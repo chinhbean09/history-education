@@ -4,6 +4,7 @@ import com.blueteam.historyEdu.dtos.ChapterDTO;
 import com.blueteam.historyEdu.dtos.CourseDTO;
 import com.blueteam.historyEdu.dtos.CreateCourseDTO;
 import com.blueteam.historyEdu.entities.*;
+import com.blueteam.historyEdu.enums.PackageStatus;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.InvalidParamException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
@@ -142,10 +143,14 @@ public class CourseService implements ICourseService {
 
     @Override
     @Transactional
-    public CourseResponse getCourseById(Long courseId) throws DataNotFoundException {
+    public CourseResponse getCourseById(Long courseId, Long userId) throws DataNotFoundException {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND));
-        return CourseResponse.fromCourse(course);
+        User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new DataNotFoundException(MessageKeys.USER_NOT_FOUND));
+
+        boolean isEnrolled = progressRepository.existsByUserAndCourse(user, course);
+        return CourseResponse.fromCourseDetail(course, isEnrolled);
     }
 
     @Override
@@ -242,13 +247,19 @@ public class CourseService implements ICourseService {
         if (userOptional.isEmpty() || courseOptional.isEmpty()) {
             return "User or Course not found";
         }
-
+        if(userOptional.get().getPackageStatus() != PackageStatus.PAID){
+            return "User not paid the package";
+        }
         User user = userOptional.get();
         Course course = courseOptional.get();
 
         // Check if the user is already enrolled in the course
         try {
             Optional<Progress> existingProgress = progressRepository.findByUserAndCourse(user, course);
+            if(existingProgress.isPresent()){
+                return "User is already enrolled in this course.";
+            }
+
         } catch (Exception e) {
             return "User is already enrolled in this course.";
         }

@@ -31,7 +31,7 @@ public interface ICourseService {
 
     void deleteCourse(Long courseId) throws DataNotFoundException;
 
-    CourseResponse getCourseById(Long courseId) throws DataNotFoundException;
+    CourseResponse getCourseById(Long courseId, Long userId) throws DataNotFoundException;
 
     Course uploadCourseImage(Long courseId, MultipartFile image) throws DataNotFoundException;
 

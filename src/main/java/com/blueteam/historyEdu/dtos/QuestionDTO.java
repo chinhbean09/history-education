@@ -13,14 +13,14 @@ import java.util.List;
 public class QuestionDTO {
     private Long id;
     private String text;
-    private String correctAnswer;
+//    private String correctAnswer;
     private List<String> answers;
 
     public static QuestionDTO fromQuestion(Question question) {
         return new QuestionDTO(
                 question.getId(),
                 question.getText(),
-                question.getCorrectAnswer(),
+//                question.getCorrectAnswer(),
                 question.getAnswers()
         );
     }
@@ -28,7 +28,7 @@ public class QuestionDTO {
         return Question.builder()
                 .id(this.id)  // Use the ID if present (for updates)
                 .text(this.text)
-                .correctAnswer(this.correctAnswer)
+//                .correctAnswer(this.correctAnswer)
                 .answers(this.answers)
                 .build();
     }

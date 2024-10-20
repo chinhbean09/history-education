@@ -4,7 +4,9 @@ package com.blueteam.historyEdu.controllers;
 import com.blueteam.historyEdu.dtos.CourseDTO;
 import com.blueteam.historyEdu.dtos.CreateCourseDTO;
 import com.blueteam.historyEdu.entities.Course;
+import com.blueteam.historyEdu.entities.User;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
+import com.blueteam.historyEdu.repositories.IUserRepository;
 import com.blueteam.historyEdu.responses.CourseResponse;
 import com.blueteam.historyEdu.responses.GetAllCourseResponse;
 import com.blueteam.historyEdu.responses.ResponseObject;
@@ -28,7 +30,7 @@ import java.util.List;
 public class CourseController {
 
     private final ICourseService courseService;
-
+    private final IUserRepository userRepository;
     // api create course
     @PostMapping("/create")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
@@ -127,9 +129,11 @@ public class CourseController {
 
     // api get course by id
     @GetMapping("/getDetail/{courseId}")
-    public ResponseEntity<ResponseObject> getCourseById(@PathVariable Long courseId) {
+    public ResponseEntity<ResponseObject> getCourseById(@PathVariable Long courseId,
+                                                        @RequestParam Long userId
+    ) {
         try {
-            CourseResponse courseResponse = courseService.getCourseById(courseId);
+            CourseResponse courseResponse = courseService.getCourseById(courseId, userId);
             return ResponseEntity.status(HttpStatus.OK).body(
                     ResponseObject.builder()
                             .data(courseResponse)
