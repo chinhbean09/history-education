@@ -17,7 +17,7 @@ public class ProgressController {
     private final IProgressService progressService;
 
     //  danh sách tiến trình của người dùng theo khóa học
-    @GetMapping("/user/{userId}/course/{chapterId}")
+    @GetMapping("/user/{userId}/chapter/{chapterId}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_CUSTOMER')")
     public ResponseEntity<List<ProgressDTO>> getProgressByUserAndChapter(@PathVariable Long userId, @PathVariable Long chapterId) {
         List<ProgressDTO> progressDTOList = progressService.getProgressByUserAndChapter(userId, chapterId);
