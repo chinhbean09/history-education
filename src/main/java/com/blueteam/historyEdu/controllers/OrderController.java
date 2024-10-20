@@ -1,5 +1,6 @@
 package com.blueteam.historyEdu.controllers;
 
+import com.blueteam.historyEdu.dtos.DataMailDTO;
 import com.blueteam.historyEdu.entities.Purchase;
 import com.blueteam.historyEdu.entities.ServicePackage;
 import com.blueteam.historyEdu.entities.User;
@@ -7,8 +8,10 @@ import com.blueteam.historyEdu.enums.PackageStatus;
 import com.blueteam.historyEdu.repositories.IPurchaseRepository;
 import com.blueteam.historyEdu.repositories.IServicePackageRepository;
 import com.blueteam.historyEdu.repositories.IUserRepository;
+import com.blueteam.historyEdu.services.sendmails.IMailService;
 import com.blueteam.historyEdu.services.user.UserService;
 import com.blueteam.historyEdu.type.CreatePaymentLinkRequestBody;
+import com.blueteam.historyEdu.utils.MailTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +27,9 @@ import vn.payos.type.PaymentData;
 import vn.payos.type.PaymentLinkData;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -36,6 +41,7 @@ public class OrderController {
     private final IUserRepository userRepository;
     private final IServicePackageRepository servicePackageRepository;
     private final IPurchaseRepository purchaseRepository;
+    private final IMailService mailService;
 
     @GetMapping(value = "/success")
     public RedirectView success(@RequestParam Map<String, String> params) {
@@ -81,6 +87,16 @@ public class OrderController {
 
                 user.setPackageStatus(PackageStatus.ACTIVE);
                 userRepository.save(user);
+                // Send email
+                sendMailForPaymentSuccess(
+                        user.getEmail(),
+                        user.getFullName(),
+                        purchase.getServicePackage().getPackageName(),
+                        purchase.getPrice(),
+                        purchase.getExpiryDate(),
+                        purchase.getPurchaseDate(),
+                        purchase.getOrderCode()
+                );
             }
 
             response.put("error", 0);
@@ -252,5 +268,31 @@ public class OrderController {
         }
         url += contextPath;
         return url;
+    }
+
+    private void sendMailForPaymentSuccess(String email,
+                                           String userName,
+                                           String packageName,
+                                           double price,
+                                           LocalDateTime purchaseDate,
+                                           LocalDateTime expiryDate,
+                                           Long orderCode) {
+        try {
+            DataMailDTO dataMailDTO = new DataMailDTO();
+            dataMailDTO.setTo(email);
+            dataMailDTO.setSubject(MailTemplate.SEND_MAIL_SUBJECT.PAYMENT_SUCCESS);
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("userName", userName);
+            attributes.put("packageName", packageName);
+            attributes.put("price", price);
+            attributes.put("purchaseDate", purchaseDate);
+            attributes.put("expiryDate", expiryDate);
+            attributes.put("orderCode", orderCode);
+            dataMailDTO.setProps(attributes);
+
+            mailService.sendHtmlMail(dataMailDTO, MailTemplate.SEND_MAIL_TEMPLATE.PAYMENT_SUCCESS_TEMPLATE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
