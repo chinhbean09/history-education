@@ -107,5 +107,36 @@ public class CourseResponse {
                 .build();
     }
 
+    public static CourseResponse fromCourseDetailForGuest(Course course) {
+
+        // Handle potential null reviews or chapters
+        List<ReviewResponse> reviews = (course.getReviews() != null) ?
+                course.getReviews().stream().map(ReviewResponse::fromReview).toList() :
+                new ArrayList<>();
+
+        List<ChapterResponse> chapters = (course.getChapters() != null) ?
+                course.getChapters().stream().map(ChapterResponse::fromChapter).toList() :
+                new ArrayList<>();
+
+        return CourseResponse.builder()
+                .id(course.getId())
+                .courseName(course.getCourseName())
+                .introductionVideoUrl(course.getIntroductionVideoUrl())
+                .description(course.getDescription())
+                .moreInformation(course.getMoreInformation())
+                .image(course.getImage())
+                .chapters(chapters)
+                .totalDuration(course.getTotalDuration())
+                .totalChapter(course.getTotalChapter())
+                .totalLessons(course.getTotalLessons())
+//                .price(course.getPrice())
+                .rating(course.getRating())
+                .whatsLearned(course.getWhatsLearned())
+                .requireToPass(course.getRequireToPass())
+                .reviews(reviews)
+                .build();
+    }
+
+
 
 }

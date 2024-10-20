@@ -156,6 +156,15 @@ public class CourseService implements ICourseService {
 
     @Override
     @Transactional
+    public CourseResponse getCourseByIdForGuest(Long courseId) throws DataNotFoundException {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND));
+
+        return CourseResponse.fromCourseDetailForGuest(course);
+    }
+
+    @Override
+    @Transactional
     public Course uploadCourseImage(Long courseId, MultipartFile image) throws DataNotFoundException {
 
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new DataNotFoundException(MessageKeys.COURSE_NOT_FOUND));

@@ -35,6 +35,8 @@ public interface ICourseService {
 
     CourseResponse getCourseById(Long courseId, Long userId) throws DataNotFoundException;
 
+    CourseResponse getCourseByIdForGuest(Long courseId) throws DataNotFoundException;
+
     Course uploadCourseImage(Long courseId, MultipartFile image) throws DataNotFoundException;
 
     CourseResponse createFullCourse(CreateCourseDTO createCourseDTO) throws DataNotFoundException, PermissionDenyException;

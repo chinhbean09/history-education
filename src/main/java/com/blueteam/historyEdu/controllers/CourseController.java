@@ -158,6 +158,28 @@ public class CourseController {
         }
     }
 
+    @GetMapping("/get-detail-guest/{courseId}")
+    public ResponseEntity<ResponseObject> getCourseByIdForGuest(@PathVariable Long courseId) {
+        try {
+            CourseResponse courseResponse = courseService.getCourseByIdForGuest(courseId);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    ResponseObject.builder()
+                            .data(courseResponse)
+                            .message(MessageKeys.COURSE_FETCHED_SUCCESSFULLY)
+                            .status(HttpStatus.OK)
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    ResponseObject.builder()
+                            .data(null)
+                            .message(e.getMessage())
+                            .status(HttpStatus.BAD_REQUEST)
+                            .build()
+            );
+        }
+    }
+
     // delete course
     @DeleteMapping("/delete/{courseId}")
     public ResponseEntity<ResponseObject> deleteCourse(@PathVariable Long courseId) {
