@@ -71,14 +71,30 @@ public class QuizService implements IQuizService  {
     }
 
     private void updateUserProgressForNewQuiz(Course course, Quiz quiz) {
+        // Get the chapter ID to which the new quiz's lesson belongs
+        Long targetChapterId = quiz.getLesson().getChapter().getId();
+
+        // Fetch all users enrolled in this course
         List<Progress> enrolledUsersProgress = progressRepository.findByCourse(course);
+
+        // Iterate through each user's progress
         for (Progress progress : enrolledUsersProgress) {
-            QuizProgress quizProgress = QuizProgress.builder()
-                    .quiz(quiz)
-                    .progress(progress)
-                    .isCompleted(false)
-                    .build();
-            quizProgressRepository.save(quizProgress);
+            // Check if the user's progress is associated with the chapter of the new quiz
+            if (progress.getChapterId().equals(targetChapterId)) {
+                // Create a new QuizProgress entry for the new quiz
+                QuizProgress quizProgress = QuizProgress.builder()
+                        .quiz(quiz)
+                        .progress(progress)
+                        .isCompleted(false) // Initially marked as not completed
+                        .build();
+
+                // Save the new QuizProgress entry
+                quizProgressRepository.save(quizProgress);
+
+                // Optionally, check if the chapter is now completed
+                progress.checkChapterCompletion();
+                progressRepository.save(progress);
+            }
         }
     }
 

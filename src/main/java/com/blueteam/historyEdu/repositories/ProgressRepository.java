@@ -1,5 +1,6 @@
 package com.blueteam.historyEdu.repositories;
 
+import com.blueteam.historyEdu.entities.Chapter;
 import com.blueteam.historyEdu.entities.Course;
 import com.blueteam.historyEdu.entities.Progress;
 import com.blueteam.historyEdu.entities.User;
@@ -27,5 +28,7 @@ public interface ProgressRepository extends JpaRepository<Progress, Long> {
     List<Progress> findByCourse(Course course);
 
     boolean existsByUserAndCourse(User user, Course course);
+
+    boolean existsByUserAndChapterId(User user, Long chapterId);
 
 }
