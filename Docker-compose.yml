@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: postgresql_container
+    image: postgres:16.1-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_DB=history_edu
+    volumes:
+      - db:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - my-network
+
+  app:
+    container_name: be-container
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/fresher-management?serverTimezone=UTC&allowPublicKeyRetrieval=true
+      PGADMIN_USER: postgres
+      PGADMIN_PASSWORD: 12345
+    networks:
+      - my-network
+
+volumes:
+  db:
+networks:
+  my-network:
+    driver: bridge
+
