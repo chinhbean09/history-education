@@ -266,7 +266,7 @@ public class CourseService implements ICourseService {
         Course course = courseOptional.get();
 
         // Kiểm tra trạng thái gói
-        if (user.getPackageStatus() != PackageStatus.PAID) {
+        if (user.getPackageStatus() != PackageStatus.ACTIVE) {
             return EnrollStatus.UNPAID; // Trả về trạng thái chưa thanh toán
         }
 
