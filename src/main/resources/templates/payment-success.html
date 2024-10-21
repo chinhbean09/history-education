@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán thành công</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'/>
+    <style type="text/css">
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #666;
+            line-height: 1.6;
+        }
+        .details {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #888;
+        }
+        .footer p {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Thanh toán thành công</h1>
+    <p>Kính gửi <span th:text="${userName}"></span>,</p>
+
+    <p>Chúng tôi vui mừng thông báo rằng thanh toán của bạn đã được xử lý thành công. Dưới đây là chi tiết giao dịch của bạn:</p>
+
+    <div class="details">
+        <p><strong>Mã đơn hàng:</strong> <span th:text="${orderCode}"></span></p>
+        <p><strong>Tên gói:</strong> <span th:text="${packageName}"></span></p>
+        <p><strong>Giá:</strong> $<span th:text="${price}"></span></p>
+        <p><strong>Ngày mua:</strong> <span th:text="${purchaseDate}"></span></p>
+        <p><strong>Ngày hết hạn:</strong> <span th:text="${expiryDate}"></span></p>
+    </div>
+
+    <p>Cảm ơn bạn đã mua hàng! Nếu có bất kỳ thắc mắc nào, xin vui lòng liên hệ với chúng tôi.</p>
+
+    <div class="footer">
+        <p>&copy; 2024 Blue History. All rights reserved.</p>
+    </div>
+</div>
+</body>
+</html>
