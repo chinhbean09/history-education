@@ -102,15 +102,13 @@ public class PackageService implements IPackageService {
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")  // Chạy vào lúc 12h đêm mỗi ngày
+    @Scheduled(cron = "0 0 0 * * ?")
     public void checkExpiredPackages() {
         LocalDateTime now = LocalDateTime.now();
 
-        // Lấy tất cả các gói đã hết hạn
         List<Purchase> expiredPurchases = purchaseRepository.findAllByPackageStatusAndExpiryDateBefore(PackageStatus.PAID, now);
 
         for (Purchase purchase : expiredPurchases) {
-            // Cập nhật trạng thái của gói và người dùng
             purchase.setPackageStatus(PackageStatus.EXPIRED);
             purchaseRepository.save(purchase);
 
@@ -118,14 +116,12 @@ public class PackageService implements IPackageService {
             user.setPackageStatus(PackageStatus.EXPIRED);
             userRepository.save(user);
 
-            // Có thể gửi email thông báo cho người dùng nếu cần
             sendExpirationNotification(user);
         }
     }
 
     private void sendExpirationNotification(User user) {
-        // Hàm này sẽ gửi email hoặc thông báo cho người dùng về việc gói của họ đã hết hạn.
-        // Ví dụ như:
+
         System.out.println("Send expiration email to: " + user.getEmail());
     }
 
