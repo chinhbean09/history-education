@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông báo hết hạn gói học</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'/>
+    <style type="text/css">
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        .header {
+            background-color: #3b5998;
+            padding: 25px;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 30px 20px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .content p {
+            font-size: 16px;
+            margin: 18px 0;
+        }
+
+        .content .highlight {
+            background-color: #ffefba;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #3b5998;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background-color: #334d8f;
+        }
+
+        .footer {
+            background-color: #f8f8f8;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        .footer a {
+            color: #3b5998;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Thông báo hết hạn gói học</h1>
+    </div>
+    <div class="content">
+        <p>Xin chào <span th:text="${fullName}"></span>,</p>
+        <p>Chúng tôi xin thông báo rằng gói học của bạn đã hết hạn. Để tiếp tục truy cập vào các bài học và tài liệu, vui lòng gia hạn gói học của bạn sớm nhất có thể.</p>
+
+        <p class="highlight">Gói học của bạn đã hết hạn vào ngày <span th:text="${expiryDate}"></span>.</p>
+
+        <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với đội ngũ hỗ trợ của chúng tôi. Cảm ơn bạn đã đồng hành cùng chúng tôi trong hành trình học tập này.</p>
+    </div>
+    <div class="footer">
+        <p>&copy; 2024 Blue History. Mọi quyền được bảo lưu. <a href="#">Chính sách bảo mật</a></p>
+    </div>
+</div>
+</body>
+</html>

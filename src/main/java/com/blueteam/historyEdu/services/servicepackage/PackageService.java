@@ -11,6 +11,7 @@ import com.blueteam.historyEdu.repositories.IPurchaseRepository;
 import com.blueteam.historyEdu.repositories.IServicePackageRepository;
 import com.blueteam.historyEdu.repositories.IUserRepository;
 import com.blueteam.historyEdu.services.sendmails.IMailService;
+import com.blueteam.historyEdu.utils.MailTemplate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -116,13 +117,26 @@ public class PackageService implements IPackageService {
             user.setPackageStatus(PackageStatus.EXPIRED);
             userRepository.save(user);
 
-            sendExpirationNotification(user);
+            sendExpirationNotification(user, purchase);
         }
     }
 
-    private void sendExpirationNotification(User user) {
+    private void sendExpirationNotification(User user, Purchase purchase) {
 
-        System.out.println("Send expiration email to: " + user.getEmail());
+        try {
+            DataMailDTO dataMail = new DataMailDTO();
+            dataMail.setTo(user.getEmail());
+            dataMail.setSubject(MailTemplate.SEND_MAIL_SUBJECT.PACKAGE_EXPIRED);
+
+            Map<String, Object> properties = new HashMap<>();
+            properties.put("fullName", user.getFullName());
+            properties.put("expiryDate", purchase.getExpiryDate());
+
+            dataMail.setProps(properties);
+            mailService.sendHtmlMail(dataMail, MailTemplate.SEND_MAIL_TEMPLATE.PACKAGE_EXPIRED_TEMPLATE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
