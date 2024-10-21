@@ -93,8 +93,8 @@ public class OrderController {
                         user.getFullName(),
                         purchase.getServicePackage().getPackageName(),
                         purchase.getPrice(),
-                        purchase.getExpiryDate(),
                         purchase.getPurchaseDate(),
+                        purchase.getExpiryDate(),
                         purchase.getOrderCode()
                 );
             }
