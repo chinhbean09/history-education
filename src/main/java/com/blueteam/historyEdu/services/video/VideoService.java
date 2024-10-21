@@ -76,21 +76,31 @@ public class VideoService implements IVideoService {
         // Fetch all users enrolled in this course
         List<Progress> enrolledUsersProgress = progressRepository.findByCourse(course);
 
-        // Iterate through each user's progress and add a new VideoProgress for the new video
-        for (Progress progress : enrolledUsersProgress) {
-            Optional<VideoProgress> videoProgressOptional = videoProgressRepository.findByProgressAndVideo(progress, video);
-            if (videoProgressOptional.isEmpty()) {
-                // Create a new VideoProgress entry for the new video
-                VideoProgress videoProgress = VideoProgress.builder()
-                        .video(video)
-                        .progress(progress)
-                        .watchedDuration(0.0) // Initial watched duration
-                        .duration(Double.valueOf(video.getDuration())) // Video duration
-                        .isCompleted(false)
-                        .build();
+        // Get the chapter to which the new video's lesson belongs
+        Long targetChapterId = video.getLesson().getChapter().getId();
 
-                // Save the new VideoProgress entry
-                videoProgressRepository.save(videoProgress);
+        // Iterate through each user's progress
+        for (Progress progress : enrolledUsersProgress) {
+            // Check if the user's progress is associated with the chapter of the new video
+            if (progress.getChapterId().equals(targetChapterId)) {
+                Optional<VideoProgress> videoProgressOptional = videoProgressRepository.findByProgressAndVideo(progress, video);
+                if (videoProgressOptional.isEmpty()) {
+                    // Create a new VideoProgress entry for the new video
+                    VideoProgress videoProgress = VideoProgress.builder()
+                            .video(video)
+                            .progress(progress)
+                            .watchedDuration(0.0) // Initial watched duration
+                            .duration(Double.valueOf(video.getDuration())) // Video duration
+                            .isCompleted(false)
+                            .build();
+
+                    // Save the new VideoProgress entry
+                    videoProgressRepository.save(videoProgress);
+                }
+
+                // Optionally, check if the chapter is now completed
+                progress.checkChapterCompletion();
+                progressRepository.save(progress);
             }
         }
     }

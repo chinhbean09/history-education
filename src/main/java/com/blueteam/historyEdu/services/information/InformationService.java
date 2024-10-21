@@ -57,15 +57,31 @@ public class InformationService implements IInformationService {
     }
 
     private void updateUserProgressForNewInformation(Course course, Information information) {
+        // Get the chapter to which the new information's lesson belongs
+        Long targetChapterId = information.getLesson().getChapter().getId();
+
+        // Fetch all users enrolled in this course
         List<Progress> enrolledUsersProgress = progressRepository.findByCourse(course);
+
+        // Iterate through each user's progress
         for (Progress progress : enrolledUsersProgress) {
-            InfoProgress infoProgress = InfoProgress.builder()
-                    .information(information)
-                    .infoId(information.getId())
-                    .progress(progress)
-                    .isViewed(false)
-                    .build();
-            infoProgressRepository.save(infoProgress);
+            // Check if the user's progress is associated with the chapter of the new information
+            if (progress.getChapterId().equals(targetChapterId)) {
+                // Create a new InfoProgress entry for the new information
+                InfoProgress infoProgress = InfoProgress.builder()
+                        .information(information)
+                        .infoId(information.getId())
+                        .progress(progress)
+                        .isViewed(false) // Initially marked as not viewed
+                        .build();
+
+                // Save the new InfoProgress entry
+                infoProgressRepository.save(infoProgress);
+
+                // Optionally, check if the chapter is now completed
+                progress.checkChapterCompletion();
+                progressRepository.save(progress);
+            }
         }
     }
 

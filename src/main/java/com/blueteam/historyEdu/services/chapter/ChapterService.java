@@ -8,6 +8,7 @@ import com.blueteam.historyEdu.exceptions.PermissionDenyException;
 import com.blueteam.historyEdu.repositories.IChapterRepository;
 import com.blueteam.historyEdu.repositories.ICourseRepository;
 import com.blueteam.historyEdu.repositories.ILessonRepository;
+import com.blueteam.historyEdu.repositories.ProgressRepository;
 import com.blueteam.historyEdu.responses.ChapterResponse;
 import com.blueteam.historyEdu.responses.CourseResponse;
 import com.blueteam.historyEdu.utils.MessageKeys;
@@ -27,6 +28,7 @@ public class ChapterService implements IChapterService {
     private final IChapterRepository chapterRepository;
     private final ICourseRepository courseRepository;
     private final ILessonRepository lessonRepository;
+    private final ProgressRepository progressRepository;
 
     @Override
     @Transactional
@@ -67,12 +69,38 @@ public class ChapterService implements IChapterService {
             // Save the updated course with new totalChapter and totalLessons
             courseRepository.save(course);
 
+            // Update enrolled users' progress for the new chapter
+            updateUserProgressForNewChapter(course, chapter);
+
             // Return the updated course response
             return CourseResponse.fromCourse(course);
         } else {
             throw new PermissionDenyException(MessageKeys.PERMISSION_DENIED);
         }
     }
+
+    private void updateUserProgressForNewChapter(Course course, Chapter chapter) {
+        // Fetch all users enrolled in the course
+        List<Progress> enrolledUsersProgress = progressRepository.findByCourse(course);
+
+        for (Progress progress : enrolledUsersProgress) {
+            // Check if progress for this chapter already exists
+            boolean progressExists = progressRepository.existsByUserAndChapterId(progress.getUser(), chapter.getId());
+            if (!progressExists) {
+                // Create a new Progress entry for the new chapter
+                Progress newProgress = Progress.builder()
+                        .user(progress.getUser()) // Link it to the same user
+                        .chapterId(chapter.getId()) // Set the new chapter ID
+                        .course(course) // Set the course reference
+                        .isChapterCompleted(false) // Initially marked as not completed
+                        .build();
+
+                // Save the new progress for the chapter
+                progressRepository.save(newProgress);
+            }
+        }
+    }
+
 
     @Override
     @Transactional
