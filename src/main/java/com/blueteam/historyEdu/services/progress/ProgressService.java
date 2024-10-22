@@ -32,6 +32,8 @@ public class ProgressService implements IProgressService{
 
     private final ICourseRepository courseRepository;
 
+    private final IChapterRepository chapterRepository;
+
     public List<ProgressDTO> getProgressByUserAndChapter(Long userId, Long chapterId) {
         List<Progress> progressList = progressRepository.findByUserIdAndChapterId(userId, chapterId);
         return progressList.stream().map(this::convertToDto).collect(Collectors.toList());
@@ -78,6 +80,11 @@ public class ProgressService implements IProgressService{
         ProgressDTO dto = new ProgressDTO();
         dto.setChapterId(progress.getChapterId());
         dto.setChapterCompleted(progress.isChapterCompleted());
+        // Fetch the Chapter to get its stt value
+        Chapter chapter = chapterRepository.findById(progress.getChapterId())
+                .orElseThrow(() -> new RuntimeException("Chapter not found with id: " + progress.getChapterId()));
+
+        dto.setChapterStt(chapter.getStt()); // Set the stt value from the Chapter
 
         List<VideoProgressDTO> videoProgressDTOs = progress.getVideoProgresses().stream().map(videoProgress -> {
             VideoProgressDTO videoDTO = new VideoProgressDTO();
