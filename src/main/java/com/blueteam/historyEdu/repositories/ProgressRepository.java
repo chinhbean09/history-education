@@ -31,4 +31,6 @@ public interface ProgressRepository extends JpaRepository<Progress, Long> {
 
     boolean existsByUserAndChapterId(User user, Long chapterId);
 
+    void deleteByChapterId(Long chapterId);
+
 }

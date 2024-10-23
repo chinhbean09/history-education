@@ -70,6 +70,10 @@ public class Course {
     private List<Chapter> chapters = new ArrayList<>();
 
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Progress> progresses = new ArrayList<>();
+
+
 //    @OneToMany(mappedBy = "course")
 //    private List<UserProgress> userProgressList = new ArrayList<>();
 
