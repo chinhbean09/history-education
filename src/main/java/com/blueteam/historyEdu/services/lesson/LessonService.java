@@ -25,6 +25,9 @@ public class LessonService implements ILessonService {
     private final IVideoRepository videoRepository;
     private final IInformationRepository informationRepository;
     private final IQuizAttemptRepository quizAttemptRepository;
+    private final IVideoProgressRepository videoProgressRepository;
+    private final InfoProgressRepository infoProgressRepository;
+    private final QuizProgressRepository quizProgressRepository;
 
     @Override
     @Transactional
@@ -34,6 +37,9 @@ public class LessonService implements ILessonService {
 
         if (quiz.isPresent()) {
             Quiz quizEntity = quiz.get();
+
+            // Xóa tất cả các video progress liên quan định với quiz
+            quizProgressRepository.deleteByQuizId(quizId);
 
             // Xóa tất cả các quiz attempts liên quan đến quiz này
             quizAttemptRepository.deleteAllByQuizId(quizId);
@@ -74,34 +80,39 @@ public class LessonService implements ILessonService {
 
         if (video.isPresent()) {
             Video videoEntity = video.get();
+
+            // Delete related video progress records before deleting the video
+            videoProgressRepository.deleteByVideoId(videoId);
+
             Lesson lesson = videoEntity.getLesson();
             lesson.getVideos().remove(videoEntity);
+
+            // Now delete the video
             videoRepository.delete(videoEntity);
             videoRepository.flush();
+
             System.out.println("Video deleted: " + videoEntity.getId());
 
+            // Reorder stt for remaining videos, information, and quizzes
+            List<Video> videos = videoRepository.findAllByLessonIdOrderBySttAsc(lessonId);
+            List<Information> infos = informationRepository.findAllByLessonIdOrderBySttAsc(lessonId);
+            List<Quiz> quizzes = quizRepository.findAllByLessonIdOrderBySttAsc(lessonId);
 
+            List<ItemWithStt> allItems = new ArrayList<>();
+            allItems.addAll(videos);
+            allItems.addAll(infos);
+            allItems.addAll(quizzes);
 
-        // Lấy danh sách video, information, và quiz theo lessonId và sắp xếp theo stt
-        List<Video> videos = videoRepository.findAllByLessonIdOrderBySttAsc(lessonId);
-        List<Information> infos = informationRepository.findAllByLessonIdOrderBySttAsc(lessonId);
-        List<Quiz> quizzes = quizRepository.findAllByLessonIdOrderBySttAsc(lessonId);
+            // Reset stt values
+            for (int i = 0; i < allItems.size(); i++) {
+                allItems.get(i).setStt(i + 1);
+            }
 
-        // Kết hợp tất cả các danh sách vào một danh sách chung
-        List<ItemWithStt> allItems = new ArrayList<>();
-        allItems.addAll(videos);
-        allItems.addAll(infos);
-        allItems.addAll(quizzes);
+            // Save the changes
+            videoRepository.saveAll(videos);
+            informationRepository.saveAll(infos);
+            quizRepository.saveAll(quizzes);
 
-        // Sắp xếp lại stt sau khi xóa
-        for (int i = 0; i < allItems.size(); i++) {
-            allItems.get(i).setStt(i + 1); // Đặt lại stt
-        }
-
-        // Lưu lại các thay đổi
-        videoRepository.saveAll(videos);
-        informationRepository.saveAll(infos);
-        quizRepository.saveAll(quizzes);
         } else {
             throw new DataNotFoundException(MessageKeys.VIDEO_NOT_FOUND);
         }
@@ -114,6 +125,8 @@ public class LessonService implements ILessonService {
         Optional<Information> information = informationRepository.findById(infoId);
         if (information.isPresent()) {
         Information infoEntity = information.get();
+        infoProgressRepository.deleteByInfoId(infoId);
+
         Lesson lesson = infoEntity.getLesson();
         lesson.getInformations().remove(infoEntity);
         informationRepository.delete(infoEntity);

@@ -213,6 +213,7 @@ public class ChapterService implements IChapterService {
 
         if (chapter.isPresent()) {
             Chapter chapterEntity = chapter.get();
+            //progressRepository.deleteByChapterId(chapterId);
             // Remove the chapter from the course's chapter list if necessary
             Course course = chapterEntity.getCourse();
             course.getChapters().remove(chapterEntity);  // Optional: update the course's list
