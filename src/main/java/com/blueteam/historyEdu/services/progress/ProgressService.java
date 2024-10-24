@@ -81,10 +81,16 @@ public class ProgressService implements IProgressService{
         dto.setChapterId(progress.getChapterId());
         dto.setChapterCompleted(progress.isChapterCompleted());
         // Fetch the Chapter to get its stt value
-        Chapter chapter = chapterRepository.findById(progress.getChapterId())
-                .orElseThrow(() -> new RuntimeException("Chapter not found with id: " + progress.getChapterId()));
+        try {
+            Chapter chapter = chapterRepository.findById(progress.getChapterId())
+                    .orElseThrow(() -> new RuntimeException("Chapter not found with id: " + progress.getChapterId()));
 
-        dto.setChapterStt(chapter.getStt()); // Set the stt value from the Chapter
+            dto.setChapterStt(chapter.getStt()); // Set the stt value from the Chapter
+        } catch (RuntimeException e) {
+            // Log the error and continue processing other data
+            System.err.println(e.getMessage());  // Log the error for missing chapter
+
+        }
 
         List<VideoProgressDTO> videoProgressDTOs = progress.getVideoProgresses().stream().map(videoProgress -> {
             VideoProgressDTO videoDTO = new VideoProgressDTO();

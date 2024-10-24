@@ -5,17 +5,17 @@ import com.blueteam.historyEdu.dtos.quiz.QuizDTO;
 import com.blueteam.historyEdu.entities.*;
 import com.blueteam.historyEdu.exceptions.DataNotFoundException;
 import com.blueteam.historyEdu.exceptions.PermissionDenyException;
-import com.blueteam.historyEdu.repositories.IChapterRepository;
-import com.blueteam.historyEdu.repositories.ICourseRepository;
-import com.blueteam.historyEdu.repositories.ILessonRepository;
-import com.blueteam.historyEdu.repositories.ProgressRepository;
+import com.blueteam.historyEdu.repositories.*;
 import com.blueteam.historyEdu.responses.ChapterResponse;
 import com.blueteam.historyEdu.responses.CourseResponse;
 import com.blueteam.historyEdu.utils.MessageKeys;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -29,6 +29,9 @@ public class ChapterService implements IChapterService {
     private final ICourseRepository courseRepository;
     private final ILessonRepository lessonRepository;
     private final ProgressRepository progressRepository;
+    private final InfoProgressRepository infoProgressRepository;
+    private final VideoProgressRepository videoProgressRepository;
+    private final QuizProgressRepository quizProgressRepository;
 
     @Override
     @Transactional
@@ -213,7 +216,22 @@ public class ChapterService implements IChapterService {
 
         if (chapter.isPresent()) {
             Chapter chapterEntity = chapter.get();
-            //progressRepository.deleteByChapterId(chapterId);
+            List<Lesson> lessons = chapterEntity.getLessons();
+            for (Lesson lesson : lessons) {
+                for (Information information : lesson.getInformations()) {
+                    // Delete associated InfoProgress records for each Information
+                    infoProgressRepository.deleteByInfoId(information.getId());
+                }
+                for (Quiz quiz : lesson.getQuizzes()) {
+                    // Delete associated QuizProgress records for each Quiz
+                    quizProgressRepository.deleteByQuizId(quiz.getId());
+                }
+                for (Video video : lesson.getVideos()) {
+                    // Delete associated VideoProgress records for each Video
+                    videoProgressRepository.deleteByVideoId(video.getId());
+                }
+            }
+            progressRepository.deleteByChapterId(chapterId);
             // Remove the chapter from the course's chapter list if necessary
             Course course = chapterEntity.getCourse();
             course.getChapters().remove(chapterEntity);  // Optional: update the course's list
