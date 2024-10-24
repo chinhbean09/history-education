@@ -5,7 +5,10 @@ import com.blueteam.historyEdu.entities.Course;
 import com.blueteam.historyEdu.entities.Progress;
 import com.blueteam.historyEdu.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +34,10 @@ public interface ProgressRepository extends JpaRepository<Progress, Long> {
 
     boolean existsByUserAndChapterId(User user, Long chapterId);
 
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Progress vp WHERE vp.chapterId= :chapterId")
     void deleteByChapterId(Long chapterId);
 
 }
