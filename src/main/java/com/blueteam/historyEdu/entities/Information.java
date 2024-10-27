@@ -24,7 +24,8 @@ public class Information implements ItemWithStt {
     @Column(name = "info_title",length = 1000 ,nullable = false)
     private String infoTitle;
 
-    @Column(name = "content", length = 1000 ,nullable = false)
+    @Lob
+    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @Column(name = "stt")

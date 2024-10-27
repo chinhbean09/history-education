@@ -34,6 +34,7 @@ public class ProgressService implements IProgressService{
 
     private final IChapterRepository chapterRepository;
 
+    @Transactional
     public List<ProgressDTO> getProgressByUserAndChapter(Long userId, Long chapterId) {
         List<Progress> progressList = progressRepository.findByUserIdAndChapterId(userId, chapterId);
         return progressList.stream().map(this::convertToDto).collect(Collectors.toList());
@@ -71,6 +72,7 @@ public class ProgressService implements IProgressService{
     }
 
     @Override
+    @Transactional
     public List<ProgressDTO> getProgressByUserAndCourse(Long userId, Long courseId) {
         List<Progress> progressList = progressRepository.findByUserIdAndCourseId(userId, courseId);
         return progressList.stream().map(this::convertToDto).collect(Collectors.toList());
