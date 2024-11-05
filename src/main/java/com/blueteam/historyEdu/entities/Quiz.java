@@ -41,6 +41,9 @@
         @OneToMany(mappedBy="quiz", cascade=CascadeType.ALL, orphanRemoval=true)
         private List<QuizProgress> quizProgresses = new ArrayList<>();
 
+        @OneToMany(mappedBy="quiz", cascade=CascadeType.ALL, orphanRemoval=true)
+        private List<QuizAttempt> quizAttempts = new ArrayList<>();
+
         @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
         private List<Question> questions = new ArrayList<>();;
 
