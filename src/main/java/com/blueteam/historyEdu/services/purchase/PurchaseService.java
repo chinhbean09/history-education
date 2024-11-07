@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ProgressService implements IPurchaseService{
+public class PurchaseService implements IPurchaseService{
 
     private final IPurchaseRepository purchaseRepository;
 
