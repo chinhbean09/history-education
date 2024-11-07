@@ -4,8 +4,7 @@ import com.blueteam.historyEdu.dtos.ProgressDTO;
 
 import java.util.List;
 
-public interface dd .
-IProgressService {
+public interface IProgressService {
 
      List<ProgressDTO> getProgressByUserAndChapter(Long userId, Long chapterId);
      void updateProgress(Long userId, Long chapterId, ProgressDTO progressDTO);
