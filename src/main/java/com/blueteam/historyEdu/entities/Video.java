@@ -60,6 +60,9 @@ public class Video implements ItemWithStt {
     @OneToMany(mappedBy="video", cascade=CascadeType.ALL, orphanRemoval=true)
     private List<VideoProgress> videoProgresses = new ArrayList<>();
 
+    @OneToMany(mappedBy="video", cascade=CascadeType.ALL, orphanRemoval=true)
+    private List<Interaction> interactions = new ArrayList<>();
+
     @Override
     public void setStt(int stt) {
         this.stt = stt;

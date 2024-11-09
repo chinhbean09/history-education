@@ -106,6 +106,7 @@ public class MessageKeys {
 
     public static final String REGISTER_PACKAGE_FAILED = "package.register_package.register_failed";
 
+    public static final String REVIEW_PERMISSION_DENIED = "review.review_permission_denied";
 
-
+    public static final String REVIEWS_FETCHED_SUCCESSFULLY = "review.list_review.reviews_fetched_successfully";
 }

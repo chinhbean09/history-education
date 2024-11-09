@@ -34,6 +34,8 @@ public interface ProgressRepository extends JpaRepository<Progress, Long> {
 
     boolean existsByUserAndChapterId(User user, Long chapterId);
 
+    List<Progress> findByCourseAndUser(Course course, User user);
+
 
     @Transactional
     @Modifying

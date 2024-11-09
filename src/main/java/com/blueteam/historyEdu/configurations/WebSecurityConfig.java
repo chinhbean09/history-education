@@ -74,7 +74,8 @@ public class WebSecurityConfig {
                                     String.format("/confirm-webhook", apiPrefix),
                                     String.format("%s/courses/get-all-free-course", apiPrefix),
                                     String.format("%s/courses/get-all-paid-course", apiPrefix),
-                                    String.format("%s/courses/search/**", apiPrefix)
+                                    String.format("%s/courses/search/**", apiPrefix),
+                                    String.format("%s/reviews/get-all-reviews-by-course/**", apiPrefix)
 
                             )
                             .permitAll()

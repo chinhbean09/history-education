@@ -28,6 +28,7 @@ public class Review {
     @Column(name = "rating", nullable = false)
     private Double rating;
 
-    @Column(name = "comment", length = 1000)
+
+    @Column(name = "comment", length = 1000, nullable = true)
     private String comment;
 }
