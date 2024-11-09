@@ -18,7 +18,7 @@ public class Interaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "content")
+    @Column(name = "content", length = 1000)
     private String content;
 
     @Column(name = "interaction_type")
@@ -30,4 +30,8 @@ public class Interaction {
     @ManyToOne
     @JoinColumn(name = "video_id")
     private Video video;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

@@ -102,6 +102,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/courses/get-all-paid-course", apiPrefix), "GET"),
                 Pair.of(String.format("%s/courses/get-all-free-course", apiPrefix), "GET"),
                 Pair.of(String.format("%s/courses/search/**", apiPrefix), "GET"),
+                Pair.of(String.format("%s/reviews/get-all-reviews-by-course/**", apiPrefix), "GET"),
                 Pair.of("/api-docs", "GET"),
                 Pair.of("/api-docs/**", "GET"),
                 Pair.of("/swagger-resources", "GET"),
