@@ -97,4 +97,15 @@ public class ReviewService implements IReviewService {
                 .map(ReviewListResponse::fromReview)
                 .toList();
     }
+
+    @Override
+    @Transactional
+    public String createReview(Long courseId, ReviewDTO reviewDTO) {
+        try {
+            addReview(courseId, reviewDTO);
+            return MessageKeys.REVIEW_CREATED_SUCCESSFULLY;
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
 }
