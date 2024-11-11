@@ -22,25 +22,34 @@ public class ReviewController {
     private final IReviewService reviewService;
 
     // api create review
+//    @PostMapping("/create/{courseId}")
+//    public ResponseEntity<ResponseObject> createReview(@PathVariable Long courseId, @RequestBody ReviewDTO reviewDTO) {
+//        try {
+//            CourseResponse courseResponse = reviewService.addReview(courseId, reviewDTO);
+//            return ResponseEntity.status(HttpStatus.OK).body(
+//                    ResponseObject.builder()
+//                            .data(courseResponse)
+//                            .message(MessageKeys.REVIEW_CREATED_SUCCESSFULLY)
+//                            .status(HttpStatus.OK)
+//                            .build()
+//            );
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+//                    ResponseObject.builder()
+//                            .data(null)
+//                            .message(e.getMessage())
+//                            .status(HttpStatus.BAD_REQUEST)
+//                            .build()
+//            );
+//        }
+//    }
     @PostMapping("/create/{courseId}")
-    public ResponseEntity<ResponseObject> createReview(@PathVariable Long courseId, @RequestBody ReviewDTO reviewDTO) {
+    public ResponseEntity<String> createReview(@PathVariable Long courseId, @RequestBody ReviewDTO reviewDTO) {
         try {
-            CourseResponse courseResponse = reviewService.addReview(courseId, reviewDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    ResponseObject.builder()
-                            .data(courseResponse)
-                            .message(MessageKeys.REVIEW_CREATED_SUCCESSFULLY)
-                            .status(HttpStatus.OK)
-                            .build()
-            );
+            String message = reviewService.createReview(courseId, reviewDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    ResponseObject.builder()
-                            .data(null)
-                            .message(e.getMessage())
-                            .status(HttpStatus.BAD_REQUEST)
-                            .build()
-            );
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 

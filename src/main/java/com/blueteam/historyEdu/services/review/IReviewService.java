@@ -19,4 +19,6 @@ public interface IReviewService {
 
     // get all review by course id
     List<ReviewListResponse> getAllReviewByCourseId(Long courseId) throws DataNotFoundException;
+
+    String createReview(Long courseId, ReviewDTO reviewDTO);
 }
