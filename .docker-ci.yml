@@ -1,0 +1,39 @@
+variables:
+  DOCKER_IMAGE: "${REGISTRY_USER}/${REGISTRY_PROJECT}:${CI_COMMIT_TAG}_${CI_COMMIT_SHORT_SHA}"
+  DOCKER_CONTAINER: ${REGISTRY_PROJECT}
+  DOCKER_NETWORK: "my-network"
+stages:
+  - buildandpush
+  - deploy
+  - checklog
+
+buildandpush:
+  stage: buildandpush
+  variables:
+    GIT_STRATEGY: clone
+  
+  before_script:
+    - docker login --username ${REGISTRY_USER} --password ${REGISTRY_PASSWORD}
+
+  script: |
+    pwd
+    docker build -t $DOCKER_IMAGE .
+    docker push $DOCKER_IMAGE
+  tags:
+    - project-runner
+
+deploy:
+  stage: deploy
+  variables: 
+    GIT_STRATEGY: clone
+  before_script:
+    - docker login --username ${REGISTRY_USER} --password ${REGISTRY_PASSWORD}
+
+  script: 
+    - docker pull $DOCKER_IMAGE
+    - docker rm -f $DOCKER_CONTAINER
+    - docker-compose -f Docker-compose.yml up -d app
+    
+  tags:
+    - project-runner
+
