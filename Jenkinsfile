@@ -1,43 +1,48 @@
 pipeline {
     agent any
+
     environment {
-        appUser = credentials('historyeducation-user')          
-        appDeploy = credentials('historyeducation-deploy')          
-        appVersion = credentials('historyeducation-version')        
-        appName = "history-education"                                
-        appType = "jar"                                            
-        processName = "${appName}-${appVersion}.${appType}"      
-        folderDeploy = "/deploys/${appDeploy}"                    
-        buildScript = "mvn clean install -DskipTests=true"        
-        copyScript = "sudo cp target/${processName} ${folderDeploy}" 
-        killScript = "kill -9 \$(ps -ef| grep ${processName}| grep -v grep| awk '{print \$2}')" 
-        pro_properties = "-Dspring.profiles.active=pro"         
-        permsScript = "sudo chown -R ${appUser}. ${folderDeploy}" 
-        runScript = """sudo su ${appUser} -c "cd ${folderDeploy}; java -jar ${pro_properties} ${processName} > nohup.out 2>&1 &" """
-        PAYOS_CLIENT_ID = credentials('payos-client-id')
-        PAYOS_API_KEY = credentials('payos-api-key')
-        PAYOS_CHECKSUM_KEY = credentials('payos-checksum-key')
+        CI_COMMIT_SHORT_SHA = ""
+        CI_PROJECT_NAME = ""
+        IMAGE_VERSION = ""
     }
+
+    parameters {
+        booleanParam(name: 'CLEAN_VOLUMES', defaultValue: false, description: 'Xóa volume khi down?')
+    }
+
     stages {
-        stage('info') {
-            steps {
-                sh(script: """ whoami; pwd; ls -la; """)
-            }
-        }
-        stage('build') {
-            steps {
-                sh(script: """ ${buildScript} """)
-            }
-        }
-        stage('kill') {
+        stage('get project information') {
             steps {
                 script {
-                    def processId = sh(script: "ps -ef | grep ${processName} | grep -v grep | awk '{print \$2}'", returnStdout: true).trim()
-                    if (processId) {
-                        echo "Killing process ${processId}"
-                        sh(script: "sudo kill -9 ${processId}")
-                    } else {
-                        echo "No running process found for ${processName}"
+                    CI_PROJECT_NAME = sh(script: "git remote show origin -n | grep Fetch | awk '{print \$3}' | cut -d':' -f2 | cut -d'/' -f2 | cut -d'.' -f1", returnStdout:true).trim().toLowerCase()
+                    def CI_COMMIT_HASH = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
+                    CI_COMMIT_SHORT_SHA = CI_COMMIT_HASH.take(8)
+                }
+            }
+        }
+
+        stage('build') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'docker-hub-repo', variable: 'DOCKER_HUB_REPO')]) {
+                        IMAGE_VERSION = "${DOCKER_HUB_REPO}:${CI_COMMIT_SHORT_SHA}"
+                        sh "docker build -t ${IMAGE_VERSION} ."
+                    }
+                }
+            }
+        }
+
+        stage('push to Docker Hub') {
+            steps {
+                script {
+                    withCredentials([
+                        string(credentialsId: 'docker-hub-repo', variable: 'DOCKER_HUB_REPO'),
+                        usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
+                    ]) {
+                        sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin"
+                        sh "docker push ${DOCKER_HUB_REPO}:${CI_COMMIT_SHORT_SHA}"
+                        sh "docker logout"
                     }
                 }
             }
@@ -46,13 +51,47 @@ pipeline {
         stage('deploy') {
             steps {
                 script {
-                    def fileToCopy = "target/${processName}"
-                    sh(script: "sudo cp ${fileToCopy} ${folderDeploy}")
-                    sh(script: """ ${permsScript} """)
-                    sh(script: """ whoami; """)
-                    sh(script: """ ${runScript} """)
+                    withCredentials([
+                        string(credentialsId: 'docker-hub-repo', variable: 'DOCKER_HUB_REPO'),
+                        string(credentialsId: 'db-password', variable: 'DB_PASSWORD')
+                    ]) {
+                        IMAGE_VERSION = "${DOCKER_HUB_REPO}:${CI_COMMIT_SHORT_SHA}"
+                        def downCommand = "docker compose down"
+                        if (params.CLEAN_VOLUMES) {
+                            downCommand += " -v --remove-orphans"
+                        }
+                       sh """
+                           export COMPOSE_PROJECT_NAME=coms
+                           echo "Checking if DB_PASSWORD is set: \${DB_PASSWORD:+'set'}"
+                           echo "DB_PASSWORD hash (SHA256): \$(echo -n \$DB_PASSWORD | sha256sum)"
+                           export BACKEND_IMAGE=${IMAGE_VERSION}
+                           export DB_PASSWORD=${DB_PASSWORD}
+                           ${downCommand}
+                           docker compose up -d --build
+                       """
+                    }
                 }
             }
+        }
+
+        stage('clean old images') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'docker-hub-repo', variable: 'DOCKER_HUB_REPO')]) {
+                        def images = sh(script: "docker images --format '{{.Repository}}:{{.Tag}}' | grep '^${DOCKER_HUB_REPO}:'", returnStdout: true).trim().split('\n')
+                        def oldImages = images.findAll { it != "${DOCKER_HUB_REPO}:${CI_COMMIT_SHORT_SHA}" }
+                        oldImages.each { image ->
+                            sh "docker rmi ${image} || true"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+           cleanWs()
         }
     }
 }
