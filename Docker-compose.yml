@@ -1,40 +1,46 @@
-version: "3.8"
+    services:
+      app:
+        image: ${BACKEND_IMAGE}
+        ports:
+          - "8088:8088"
+        environment:
+          SPRING_PROFILES_ACTIVE: pro
+          SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/coms
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+        depends_on:
+          - db
+        networks:
+          - backend_network
+          - external_network
+        volumes:
+          - /etc/localtime:/etc/localtime:ro
 
-services:
-  db:
-    container_name: postgresql_container
-    image: postgres:16.1-alpine
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=12345
-      - POSTGRES_DB=history_edu
+      db:
+        image: postgres:14-alpine
+        restart: unless-stopped
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ${DB_PASSWORD}
+          POSTGRES_DB: coms
+        volumes:
+          - postgres_data:/var/lib/postgresql/data
+          - /etc/localtime:/etc/localtime:ro
+        networks:
+          - backend_network
+        ports:
+          - "15432:5432"
+        deploy:
+          resources:
+            limits:
+              cpus: '1.0'
+              memory: 1G
+
     volumes:
-      - db:/var/lib/postgresql/data
-    restart: always
+      postgres_data:
+        name: coms_postgres_data
     networks:
-      - my-network
-
-  app:
-    container_name: be-container
-    depends_on:
-      - db
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 8080:8080
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/fresher-management?serverTimezone=UTC&allowPublicKeyRetrieval=true
-      PGADMIN_USER: postgres
-      PGADMIN_PASSWORD: 12345
-    networks:
-      - my-network
-
-volumes:
-  db:
-networks:
-  my-network:
-    driver: bridge
-
+      backend_network:
+        internal: true
+      external_network:
+        internal: false
